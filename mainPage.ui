@@ -54,6 +54,7 @@
      <string>File</string>
     </property>
     <addaction name="actionOpen_File"/>
+    <addaction name="actionSave"/>
     <addaction name="actionSave_File_As"/>
     <addaction name="actionExit"/>
    </widget>
@@ -71,6 +72,10 @@
    <property name="checkable">
     <bool>false</bool>
    </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>../../Pictures/openFile.png</normaloff>../../Pictures/openFile.png</iconset>
+   </property>
    <property name="text">
     <string>Open File</string>
    </property>
@@ -79,6 +84,10 @@
    </property>
   </action>
   <action name="actionSave_File_As">
+   <property name="icon">
+    <iconset>
+     <normaloff>../../Pictures/saveFIle.png</normaloff>../../Pictures/saveFIle.png</iconset>
+   </property>
    <property name="text">
     <string>Save File As</string>
    </property>
@@ -87,6 +96,10 @@
    </property>
   </action>
   <action name="actionExit">
+   <property name="icon">
+    <iconset>
+     <normaloff>../../Pictures/exit.png</normaloff>../../Pictures/exit.png</iconset>
+   </property>
    <property name="text">
     <string>Exit</string>
    </property>
@@ -95,8 +108,24 @@
    </property>
   </action>
   <action name="actionDocumentation">
+   <property name="icon">
+    <iconset>
+     <normaloff>../../Pictures/document.png</normaloff>../../Pictures/document.png</iconset>
+   </property>
    <property name="text">
     <string>Documentation</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>../../Pictures/saveFIle.png</normaloff>../../Pictures/saveFIle.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save</string>
    </property>
   </action>
  </widget>

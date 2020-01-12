@@ -7,8 +7,9 @@ Created on Fri Jan 10 18:14:15 2020
 @project: media making
 """
 import pydot
-
-
+import json
+from IPython.display import Image, display
+import os
 class Bottle:
     def __init__(self,name,date,notes,ph,children,parent = None):
         self.name = name
@@ -87,7 +88,30 @@ class Bottle:
             for child in children:
                 queue.append(child)
         return graph
+    # visualize the current graph
+    def visualize(self):
+        graph = self.generateGraph()
+        graph.write_png("temp")
+        os.system("xdg-open temp")
+        
+    ## write to a jason file using dic
+    def writeJSON(self,outputFile):
+        dic = self.generateDictionary()
+        json.dumps(dic, indent=4, sort_keys=True)
+    ## write pydot file to a png
+    def writePNG(self,outputFile):
+        graph = self.generateGraph()
+        graph.write_png(outputFile)
+A = Bottle("A",1,"",7,[],None)
+AA = Bottle("AA",1,"",7,[],None)
+AB = Bottle("AB",1,"",7,[],None)
+AC = Bottle("AC",1,"",7,[],None)
+AD = Bottle("AD",1,"",7,[],None)
+A.updateChildren([AA,AB,AC,AD])
+AAA = Bottle("AAA",1,"",7,[],None)
+AAB = Bottle("AAB",1,"",7,[],None)
+AA.updateChildren([AAA,AAB])
+dic = A.generateDictionary()
+A.visualize()
 
-
-    
 
