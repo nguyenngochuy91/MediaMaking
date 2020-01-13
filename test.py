@@ -1,30 +1,51 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'mainPage.ui'
+# Form implementation generated from reading ui file 'mainMenu.ui'
 #
-# Created by: PyQt5 UI code generator 5.9.2
+# Created by: PyQt5 UI code generator 5.14.1
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 600)
+        MainWindow.resize(927, 600)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("microbiology.jpg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        MainWindow.setWindowIcon(icon)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(0, 0, 801, 491))
+        self.label.setGeometry(QtCore.QRect(230, 210, 461, 311))
         self.label.setFrameShape(QtWidgets.QFrame.Box)
         self.label.setText("")
         self.label.setPixmap(QtGui.QPixmap("NhiHuy.jpg"))
         self.label.setScaledContents(True)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
+        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton.setGeometry(QtCore.QRect(340, 110, 231, 27))
+        self.pushButton.setObjectName("pushButton")
+        self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_2.setGeometry(QtCore.QRect(340, 150, 231, 27))
+        self.pushButton_2.setObjectName("pushButton_2")
+        self.label_2 = QtWidgets.QLabel(self.centralwidget)
+        self.label_2.setGeometry(QtCore.QRect(200, 10, 521, 51))
+        self.label_2.setTextFormat(QtCore.Qt.RichText)
+        self.label_2.setWordWrap(True)
+        self.label_2.setObjectName("label_2")
+        self.label_3 = QtWidgets.QLabel(self.centralwidget)
+        self.label_3.setGeometry(QtCore.QRect(330, 70, 261, 21))
+        self.label_3.setTextFormat(QtCore.Qt.RichText)
+        self.label_3.setWordWrap(True)
+        self.label_3.setObjectName("label_3")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 20))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 927, 25))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
@@ -36,28 +57,28 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
         self.actionOpen_File = QtWidgets.QAction(MainWindow)
         self.actionOpen_File.setCheckable(False)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("openFile.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionOpen_File.setIcon(icon)
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap("openFile.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionOpen_File.setIcon(icon1)
         self.actionOpen_File.setObjectName("actionOpen_File")
         self.actionSave_File_As = QtWidgets.QAction(MainWindow)
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap("saveFIle.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionSave_File_As.setIcon(icon1)
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap("saveFIle.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionSave_File_As.setIcon(icon2)
         self.actionSave_File_As.setObjectName("actionSave_File_As")
         self.actionExit = QtWidgets.QAction(MainWindow)
-        icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap("exit.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionExit.setIcon(icon2)
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap("exit.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionExit.setIcon(icon3)
         self.actionExit.setObjectName("actionExit")
         self.actionDocumentation = QtWidgets.QAction(MainWindow)
-        icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap("document.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionDocumentation.setIcon(icon3)
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap("document.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionDocumentation.setIcon(icon4)
         self.actionDocumentation.setObjectName("actionDocumentation")
         self.actionSave = QtWidgets.QAction(MainWindow)
         self.actionSave.setCheckable(False)
-        self.actionSave.setIcon(icon1)
+        self.actionSave.setIcon(icon2)
         self.actionSave.setObjectName("actionSave")
         self.menuFile.addAction(self.actionOpen_File)
         self.menuFile.addAction(self.actionSave)
@@ -73,6 +94,10 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "NhiMediaTracking"))
+        self.pushButton.setText(_translate("MainWindow", "Continue Old Experiment"))
+        self.pushButton_2.setText(_translate("MainWindow", "Start new Experiment"))
+        self.label_2.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:20pt; color:#ff55ff;\">Welcome to the Media Tracking Program</span></p></body></html>"))
+        self.label_3.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:10pt; color:#000000;\">What would you like to do:</span></p></body></html>"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.menuHelp.setTitle(_translate("MainWindow", "Help"))
         self.actionOpen_File.setText(_translate("MainWindow", "Open File"))
@@ -93,4 +118,3 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
-

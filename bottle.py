@@ -97,21 +97,26 @@ class Bottle:
     ## write to a jason file using dic
     def writeJSON(self,outputFile):
         dic = self.generateDictionary()
-        json.dumps(dic, indent=4, sort_keys=True)
+        try:
+            json.dump(dic, outputFile,indent=4)
+        except:
+            string = json.dumps(dic,indent=4)
+            with open(outputFile,"w") as handle:
+                handle.write(string)
     ## write pydot file to a png
     def writePNG(self,outputFile):
         graph = self.generateGraph()
         graph.write_png(outputFile)
-# A = Bottle("A",1,"",7,[],None)
-# AA = Bottle("AA",1,"",7,[],None)
-# AB = Bottle("AB",1,"",7,[],None)
-# AC = Bottle("AC",1,"",7,[],None)
-# AD = Bottle("AD",1,"",7,[],None)
-# A.updateChildren([AA,AB,AC,AD])
-# AAA = Bottle("AAA",1,"",7,[],None)
-# AAB = Bottle("AAB",1,"",7,[],None)
-# AA.updateChildren([AAA,AAB])
-# dic = A.generateDictionary()
-# A.visualize()
-
+A = Bottle("A",1,"",7,[],None)
+AA = Bottle("AA",1,"",7,[],None)
+AB = Bottle("AB",1,"",7,[],None)
+AC = Bottle("AC",1,"",7,[],None)
+AD = Bottle("AD",1,"",7,[],None)
+A.updateChildren([AA,AB,AC,AD])
+AAA = Bottle("AAA",1,"",7,[],None)
+AAB = Bottle("AAB",1,"",7,[],None)
+AA.updateChildren([AAA,AAB])
+#dic = A.generateDictionary()
+#A.visualize()
+A.writeJSON("data")
 
