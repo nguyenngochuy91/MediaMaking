@@ -10,9 +10,12 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
 import sys
+from newExperiment import Ui_NewExperiment
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
+        ## add all the widget class that store new experiment page,etc
+        self.mainWindow = MainWindow
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(927, 600)
         icon = QtGui.QIcon()
@@ -28,12 +31,18 @@ class Ui_MainWindow(object):
         self.label.setScaledContents(True)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
+        
+        # continue old experiment button
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(340, 110, 231, 27))
         self.pushButton.setObjectName("pushButton")
+        
+        # start new experiment button
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_2.setGeometry(QtCore.QRect(340, 150, 231, 27))
         self.pushButton_2.setObjectName("pushButton_2")
+        self.pushButton_2.clicked.connect(self.showNewExperiment)
+        
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
         self.label_2.setGeometry(QtCore.QRect(140, 10, 631, 51))
         self.label_2.setTextFormat(QtCore.Qt.RichText)
@@ -109,6 +118,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+        
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "NhiMediaTracking"))
@@ -139,6 +149,16 @@ class Ui_MainWindow(object):
         
     def closeFile(self):
         sys.exit(app.exec_())
+        
+    def showNewExperiment(self):
+        self.ui = Ui_NewExperiment()
+        self.form = QtWidgets.QWidget()
+        self.ui.setupUi(self.form,self.mainWindow)
+        # we hide our current window
+        self.mainWindow.hide()
+        # we show the start new experiment
+        self.form.show()
+
         
 if __name__ == "__main__":
 

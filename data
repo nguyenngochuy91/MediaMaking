@@ -1,46 +1,46 @@
 {
     "A": {
-        "Notes:": "",
+        "Date:": 1,
+        "Ph:": 7,
         "Children:": {
-            "AC": {
-                "Notes:": "",
-                "Children:": {},
-                "Ph:": 7,
-                "Date:": 1
-            },
             "AD": {
-                "Notes:": "",
-                "Children:": {},
+                "Date:": 1,
                 "Ph:": 7,
-                "Date:": 1
+                "Children:": {},
+                "Notes:": ""
             },
             "AA": {
-                "Notes:": "",
+                "Date:": 1,
+                "Ph:": 7,
                 "Children:": {
-                    "AAA": {
-                        "Notes:": "",
-                        "Children:": {},
-                        "Ph:": 7,
-                        "Date:": 1
-                    },
                     "AAB": {
-                        "Notes:": "",
-                        "Children:": {},
+                        "Date:": 1,
                         "Ph:": 7,
-                        "Date:": 1
+                        "Children:": {},
+                        "Notes:": ""
+                    },
+                    "AAA": {
+                        "Date:": 1,
+                        "Ph:": 7,
+                        "Children:": {},
+                        "Notes:": ""
                     }
                 },
+                "Notes:": ""
+            },
+            "AC": {
+                "Date:": 1,
                 "Ph:": 7,
-                "Date:": 1
+                "Children:": {},
+                "Notes:": ""
             },
             "AB": {
-                "Notes:": "",
-                "Children:": {},
+                "Date:": 1,
                 "Ph:": 7,
-                "Date:": 1
+                "Children:": {},
+                "Notes:": ""
             }
         },
-        "Ph:": 7,
-        "Date:": 1
+        "Notes:": ""
     }
 }
