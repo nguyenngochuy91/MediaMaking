@@ -34,7 +34,7 @@ class Ui_MainWindow(object):
         self.pushButton_2.setGeometry(QtCore.QRect(340, 150, 231, 27))
         self.pushButton_2.setObjectName("pushButton_2")
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setGeometry(QtCore.QRect(200, 10, 521, 51))
+        self.label_2.setGeometry(QtCore.QRect(140, 10, 631, 51))
         self.label_2.setTextFormat(QtCore.Qt.RichText)
         self.label_2.setWordWrap(True)
         self.label_2.setObjectName("label_2")
