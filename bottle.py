@@ -11,13 +11,14 @@ import json
 from IPython.display import Image, display
 import os
 class Bottle:
-    def __init__(self,name,date,notes,ph,children,parent = None):
+    def __init__(self,name,ph,date,notes,children,parent = None):
         self.name = name
         self.date = date
         self.notes = notes
         self.children = children
         self.parent = parent
         self.ph = ph
+        
     ## method to get the attributes
     def getParent(self):
         return self.parent

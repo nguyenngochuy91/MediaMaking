@@ -8,12 +8,13 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QMessageBox
 from bottle import Bottle
 
 class Ui_NewExperiment(object):
-    def setupUi(self, Form,parent):
-        self.parent = parent
-        self.window = Form
+    def setupUi(self, Form,home):
+        self.home = home
+        self.form = Form
         Form.setObjectName("Form")
         Form.resize(923, 601)
         icon = QtGui.QIcon()
@@ -37,31 +38,53 @@ class Ui_NewExperiment(object):
         self.label_5.setGeometry(QtCore.QRect(50, 330, 69, 17))
         self.label_5.setObjectName("label_5")
         
+        
         # name field
-        self.textEdit = QtWidgets.QTextEdit(Form)
-        self.textEdit.setGeometry(QtCore.QRect(140, 110, 701, 31))
-        self.textEdit.setObjectName("textEdit")
+        self.lineEdit = QtWidgets.QLineEdit(Form)
+        self.lineEdit.setGeometry(QtCore.QRect(130, 110, 691, 31))
+        self.lineEdit.setText("")
+        self.lineEdit.setObjectName("lineEdit")
+        regex=QtCore.QRegExp("[0-9a-z-A-Z_]+")
+        self.lineEdit.validator = QtGui.QRegExpValidator(regex)
+        self.lineEdit.textChanged.connect(lambda: self.check_state(self.lineEdit))
+        self.lineEdit.textChanged.emit(self.lineEdit.text())
         
         # Ph field
-        self.textEdit_2 = QtWidgets.QTextEdit(Form)
-        self.textEdit_2.setGeometry(QtCore.QRect(140, 160, 701, 31))
-        self.textEdit_2.setObjectName("textEdit_2")
+        self.lineEdit_2 = QtWidgets.QLineEdit(Form)
+        self.lineEdit_2.setGeometry(QtCore.QRect(130, 160, 691, 31))
+        self.lineEdit_2.setText("")
+        self.lineEdit_2.setObjectName("lineEdit_2")
+        self.lineEdit_2.validator = QtGui.QDoubleValidator()
+        self.lineEdit_2.textChanged.connect(lambda: self.check_state(self.lineEdit_2))
+        self.lineEdit_2.textChanged.emit(self.lineEdit_2.text())
         
         # date field
-        self.textEdit_3 = QtWidgets.QTextEdit(Form)
-        self.textEdit_3.setGeometry(QtCore.QRect(140, 210, 701, 31))
-        self.textEdit_3.setObjectName("textEdit_3")
+        self.lineEdit_3 = QtWidgets.QLineEdit(Form)
+        self.lineEdit_3.setGeometry(QtCore.QRect(130, 210, 691, 31))
+        self.lineEdit_3.setText("")
+        self.lineEdit_3.setObjectName("lineEdit_3")
+        regex=QtCore.QRegExp("^\d{4}[\-\/\s]?((((0[13578])|(1[02]))[\-\/\s]?(([0-2][0-9])|(3[01])))|(((0[469])|(11))[\-\/\s]?(([0-2][0-9])|(30)))|(02[\-\/\s]?[0-2][0-9]))$")
+        self.lineEdit_3.validator = QtGui.QRegExpValidator(regex)
+        self.lineEdit_3.textChanged.connect(lambda: self.check_state(self.lineEdit_3))
+        self.lineEdit_3.textChanged.emit(self.lineEdit_3.text())
         
-        # notes field
-        self.textEdit_4 = QtWidgets.QTextEdit(Form)
-        self.textEdit_4.setGeometry(QtCore.QRect(140, 260, 701, 191))
-        self.textEdit_4.setObjectName("textEdit_4")
+        # notes fieldnder
+        self.plainTextEdit = QtWidgets.QPlainTextEdit(Form)
+        self.plainTextEdit.setGeometry(QtCore.QRect(130, 290, 701, 191))
+        self.plainTextEdit.setObjectName("plainTextEdit")
+        # regex=QtCore.QRegExp("[^\n]+")
+        # self.plainTextEdit.validator = QtGui.QRegExpValidator(regex)
+        # self.plainTextEdit.textChanged.connect(lambda: self.check_state(self.plainTextEdit))
+        # self.plainTextEdit.textChanged.emit(self.plainTextEdit.toPlainText())   
         
+        # fields
+        self.fields = {self.lineEdit:"name",self.lineEdit_2:"ph",self.lineEdit_3:"date"}
         
         # Ok button
         self.pushButton = QtWidgets.QPushButton(Form)
         self.pushButton.setGeometry(QtCore.QRect(320, 500, 61, 41))
         self.pushButton.setObjectName("pushButton")
+        self.pushButton.clicked.connect(self.ok)
         
         # Cancel button
         self.pushButton_2 = QtWidgets.QPushButton(Form)
@@ -69,9 +92,13 @@ class Ui_NewExperiment(object):
         self.pushButton_2.setObjectName("pushButton_2")
         self.pushButton_2.clicked.connect(self.cancel)
         
+        
+        self.label_6 = QtWidgets.QLabel(Form)
+        self.label_6.setGeometry(QtCore.QRect(20, 240, 91, 16))
+        self.label_6.setObjectName("label_6")
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
-
+        
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "New Experiment"))
@@ -80,12 +107,52 @@ class Ui_NewExperiment(object):
         self.label_3.setText(_translate("Form", "Ph:"))
         self.label_4.setText(_translate("Form", "Date:"))
         self.label_5.setText(_translate("Form", "Notes:"))
+        self.label_6.setText(_translate("Form", "(yyyy-mm-dd)"))
         self.pushButton.setText(_translate("Form", "OK"))
         self.pushButton_2.setText(_translate("Form", "Cancel"))
-
+        
+    ## validation method for user input with color
+    def check_state(self,sender):
+        validator = sender.validator
+        # print (sender.text())
+        state = validator.validate(sender.text(), 0)[0]
+        if state == QtGui.QValidator.Acceptable:
+            color = '#c4df9b' # green
+        elif state == QtGui.QValidator.Intermediate:
+            color = '#fff79a' # yellow
+        else:
+            color = '#f6989d' # red
+        sender.setStyleSheet('QLineEdit { background-color: %s }' % color)
+    ## button executions
+    # cancel button, go back to home
     def cancel(self):
-        self.window.hide()
-        self.parent.show()
+        self.form.hide()
+        self.home.window.show()
+    # ok button, store it into a bottle object, and go to menu
+    def ok(self):
+        # check if all the fields are valid
+        self.vals = []
+        for field in self.fields:
+            fieldName = self.fields[field]
+            state = field.validator.validate(field.text(),0)[0]
+            if state == QtGui.QValidator.Acceptable:
+                self.vals.append(field.text())
+            else:
+                # prompt the user ofr the problem 
+                QtWidgets.QMessageBox.information(self.window, 'Error', 'You have enter invalid data in field {}!'.format(fieldName), QtWidgets.QMessageBox.Ok)
+                field.setFocusPolicy(QtCore.Qt.StrongFocus)
+                field.setFocus()
+                return 
+        self.vals.append(self.plainTextEdit.toPlainText())
+        # store info into our self.root bottle object
+        self.home.root = Bottle(self.vals[0],self.vals[1],self.vals[2],self.vals[3],[],None)
+        # go to next menu
+        self.home.ui = self.home.pages["mainMenu"]
+        self.home.form = QtWidgets.QMainWindow()
+        self.home.ui.setupUi(self.home.form,self.home)
+        self.form.hide()
+        self.home.form.show()
+        
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
