@@ -7,8 +7,9 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QFileDialog
-import pydot # to visualize
+from PyQt5.QtWidgets import QFileDialog,QGroupBox,QFormLayout,QVBoxLayout
+#from PyQt5.QtCore import Qt
+#import pydot # to visualize
 
 
 class Ui_MainMenu(object):
@@ -151,13 +152,30 @@ class Ui_MainMenu(object):
 #        self.home.root.writeJSON("data")
         graph.write_png("temp")
         pixmap = QtGui.QPixmap('temp')
+        # generate a new widget to show
         self.newWidget = QtWidgets.QWidget()
-        self.newWidget.title = "Visualization"
+        self.newWidget.setWindowTitle("Visualization")
+        
+        # label object
         label = QtWidgets.QLabel(self.newWidget)
         label.setPixmap(pixmap)
         self.newWidget.resize(pixmap.width(),pixmap.height())
+        # formlayout for our label
+        formLayout =QFormLayout()
+        groupBox = QGroupBox("Your current beautiful graph:")
+        formLayout.addRow(label)
+        groupBox.setLayout(formLayout)
+#         add scrollable
+        scroller = QtWidgets.QScrollArea()
+        scroller.setWidget(groupBox)
+        scroller.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+        scroller.setWidgetResizable(True)
+        
+        # main layout
+        layout = QVBoxLayout(self.newWidget)
+        layout.addWidget(scroller)
+        
         self.newWidget.show()
-        # self.home.root.writeJSON("data")
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
