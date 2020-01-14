@@ -9,7 +9,8 @@ Created on Fri Jan 10 18:14:15 2020
 import pydot
 import json
 from IPython.display import Image, display
-import os
+import os,platform
+
 class Bottle:
     def __init__(self,name,ph,date,notes,children,parent = None):
         self.name = name
@@ -68,15 +69,17 @@ class Bottle:
             date = node.getDate()
             ph   = node.getPh()
             notes = node.getNotes()
-            info = "name: {}\ndate: {}\nph: {}\nnotes: {}".format(name,date,ph,notes)
+            info = "name: {}\ndate: {}\npH: {}\nnotes: {}".format(name,date,ph,notes)
             d[node] = info
             # generate newNode
-            newNode = pydot.Node(name)
-            newNode.obj_dict['name'] = name
+            newNode = pydot.Node(info)
+            newNode.obj_dict['name'] = info
             parent = node.getParent()
             if parent:
                 newE      = pydot.Edge(d[parent],d[node],color="blue")
                 graph.add_edge(newE)
+            else:
+                graph.add_node(newNode)
             # attribute = G[parent][children]
             # v         = float(attribute['volume'])
             # add       = float(attribute['add'])
@@ -89,18 +92,12 @@ class Bottle:
             for child in children:
                 queue.append(child)
         return graph
-    # visualize the current graph
-    def visualize(self):
-        graph = self.generateGraph()
-        graph.write_png("temp")
-        if os.name == "posix":
-            os.system("open temp")
-        else:
-            os.system("xdg-open temp")
+        
         
     ## write to a jason file using dic
     def writeJSON(self,outputFile):
         dic = self.generateDictionary()
+        print (dic)
         try:
             json.dump(dic, outputFile,indent=4)
         except:
@@ -112,16 +109,14 @@ class Bottle:
         graph = self.generateGraph()
         graph.write_png(outputFile)
 A = Bottle("A",1,"",7,[],None)
-AA = Bottle("AA",1,"",7,[],None)
-# AB = Bottle("AB",1,"",7,[],None)
-# AC = Bottle("AC",1,"",7,[],None)
-# AD = Bottle("AD",1,"",7,[],None)
-A.updateChildren([AA])
+#AA = Bottle("AA",1,"",7,[],None)
+#AB = Bottle("AB",1,"",7,[],None)
+#AC = Bottle("AC",1,"",7,[],None)
+#AD = Bottle("AD",1,"",7,[],None)
+#A.updateChildren([AA,AB])
 # A.updateChildren([AA,AB,AC,AD])
 # AAA = Bottle("AAA",1,"",7,[],None)
 # AAB = Bottle("AAB",1,"",7,[],None)
 # AA.updateChildren([AAA,AAB])
 # dic = A.generateDictionary()
-A.writePNG("temp")
-A.writeJSON("data")
 

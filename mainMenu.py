@@ -8,6 +8,8 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
+import pydot # to visualize
+
 
 class Ui_MainMenu(object):
     def setupUi(self, MainWindow,home):
@@ -145,7 +147,16 @@ class Ui_MainMenu(object):
         self.home.current.show()
         
     def visualize(self):
-        self.home.root.visualize()
+        graph = self.home.root.generateGraph()
+        self.home.root.writeJSON("data")
+        graph.write_png("temp")
+        pixmap = QtGui.QPixmap('temp')
+        newWidget = QtWidgets.QWidget()
+        newWidget.title = "Visualization"
+        label = QtWidgets.QLabel(newWidget)
+        label.setPixmap(pixmap)
+        newWidget.resize(pixmap.width(),pixmap.height())
+        newWidget.show()
         # self.home.root.writeJSON("data")
 if __name__ == "__main__":
     import sys

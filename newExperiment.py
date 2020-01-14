@@ -78,7 +78,7 @@ class Ui_NewExperiment(object):
         # self.plainTextEdit.textChanged.emit(self.plainTextEdit.toPlainText())   
         
         # fields
-        self.fields = {self.lineEdit:"name",self.lineEdit_2:"ph",self.lineEdit_3:"date"}
+        self.fields = [(self.lineEdit,"name"),(self.lineEdit_2,"ph"),(self.lineEdit_3,"date")]
         
         # Ok button
         self.pushButton = QtWidgets.QPushButton(Form)
@@ -104,7 +104,7 @@ class Ui_NewExperiment(object):
         Form.setWindowTitle(_translate("Form", "New Experiment"))
         self.label_2.setText(_translate("Form", "<html><head/><body><p align=\"center\"><span style=\" font-size:20pt; color:#ff55ff;\">Start New Experiment</span></p></body></html>"))
         self.label.setText(_translate("Form", "Name:"))
-        self.label_3.setText(_translate("Form", "Ph:"))
+        self.label_3.setText(_translate("Form", "pH:"))
         self.label_4.setText(_translate("Form", "Date:"))
         self.label_5.setText(_translate("Form", "Notes:"))
         self.label_6.setText(_translate("Form", "(yyyy-mm-dd)"))
@@ -133,8 +133,7 @@ class Ui_NewExperiment(object):
     def ok(self):
         # check if all the fields are valid
         self.vals = []
-        for field in self.fields:
-            fieldName = self.fields[field]
+        for field,fieldName in self.fields:
             state = field.validator.validate(field.text(),0)[0]
             if state == QtGui.QValidator.Acceptable:
                 self.vals.append(field.text())
@@ -146,6 +145,7 @@ class Ui_NewExperiment(object):
                 return 
         self.vals.append(self.plainTextEdit.toPlainText())
         # store info into our self.root bottle object
+        print (self.vals)
         self.home.root = Bottle(self.vals[0],self.vals[1],self.vals[2],self.vals[3],[],None)
         # go to next menu
         self.home.showWindow("mainMenu")
