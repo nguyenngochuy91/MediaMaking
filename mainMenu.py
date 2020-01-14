@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import QFileDialog
 class Ui_MainMenu(object):
     def setupUi(self, MainWindow,home):
         self.home = home
+        self.window = MainWindow
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(926, 598)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -26,16 +27,19 @@ class Ui_MainMenu(object):
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_2.setGeometry(QtCore.QRect(330, 170, 231, 27))
         self.pushButton_2.setObjectName("pushButton_2")
+        self.pushButton_2.clicked.connect(self.goHome)
         
         # Update
         self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_3.setGeometry(QtCore.QRect(330, 240, 231, 27))
         self.pushButton_3.setObjectName("pushButton_3")
         
+        
         # Visualize
         self.pushButton_4 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_4.setGeometry(QtCore.QRect(330, 310, 231, 27))
         self.pushButton_4.setObjectName("pushButton_4")
+        self.pushButton_4.clicked.connect(self.visualize)
         
         # Analyze
         self.pushButton_5 = QtWidgets.QPushButton(self.centralwidget)
@@ -64,7 +68,8 @@ class Ui_MainMenu(object):
         icon1.addPixmap(QtGui.QPixmap("openFile.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionOpen_File.setIcon(icon1)
         self.actionOpen_File.setObjectName("actionOpen_File")
-        self.actionOpen_File.triggered.connect(self.openFile) 
+        self.actionOpen_File.triggered.connect(self.openFile)
+        
         
         # save file as
         self.actionSave_File_As = QtWidgets.QAction(MainWindow)
@@ -117,27 +122,26 @@ class Ui_MainMenu(object):
 
 
     def openFile(self):
-        name,_ = QFileDialog.getOpenFileName(MainWindow, "Open File")
+        name,_ = QFileDialog.getOpenFileName(self.window, "Open File")
         if name:
             # we store the file and bring us to another frame
             file = open(name,"r")
             
     def saveFile(self):
-        name, _ = QFileDialog.getSaveFileName(MainWindow, "Save File")
+        name, _ = QFileDialog.getSaveFileName(self.window, "Save File")
         # implement saving ...
         
     def closeFile(self):
         sys.exit(app.exec_())
         
-    def show(self,name):
-        self.ui = self.pages[name]
-        self.form = QtWidgets.QWidget()
-        self.ui.setupUi(self.form,self.mainWindow)
-        # we hide our current window
-        self.mainWindow.hide()
-        # we show the start new experiment
-        self.form.show()
-
+    def goHome(self):
+        self.home.current.hide()
+        self.home.current = self.home.window
+        self.home.current.show()
+        
+    def visualize(self):
+        self.home.root.visualize()
+        # self.home.root.writeJSON("data")
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

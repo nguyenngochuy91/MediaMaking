@@ -90,7 +90,7 @@ class Ui_NewExperiment(object):
         self.pushButton_2 = QtWidgets.QPushButton(Form)
         self.pushButton_2.setGeometry(QtCore.QRect(500, 500, 61, 41))
         self.pushButton_2.setObjectName("pushButton_2")
-        self.pushButton_2.clicked.connect(self.cancel)
+        self.pushButton_2.clicked.connect(self.goHome)
         
         
         self.label_6 = QtWidgets.QLabel(Form)
@@ -125,9 +125,10 @@ class Ui_NewExperiment(object):
         sender.setStyleSheet('QLineEdit { background-color: %s }' % color)
     ## button executions
     # cancel button, go back to home
-    def cancel(self):
-        self.form.hide()
-        self.home.window.show()
+    def goHome(self):
+        self.home.current.hide()
+        self.home.current = self.home.window
+        self.home.current.show()
     # ok button, store it into a bottle object, and go to menu
     def ok(self):
         # check if all the fields are valid
@@ -139,7 +140,7 @@ class Ui_NewExperiment(object):
                 self.vals.append(field.text())
             else:
                 # prompt the user ofr the problem 
-                QtWidgets.QMessageBox.information(self.window, 'Error', 'You have enter invalid data in field {}!'.format(fieldName), QtWidgets.QMessageBox.Ok)
+                QtWidgets.QMessageBox.information(self.home.window, 'Error', 'You have enter invalid data in field {}!'.format(fieldName), QtWidgets.QMessageBox.Ok)
                 field.setFocusPolicy(QtCore.Qt.StrongFocus)
                 field.setFocus()
                 return 
@@ -147,11 +148,8 @@ class Ui_NewExperiment(object):
         # store info into our self.root bottle object
         self.home.root = Bottle(self.vals[0],self.vals[1],self.vals[2],self.vals[3],[],None)
         # go to next menu
-        self.home.ui = self.home.pages["mainMenu"]
-        self.home.form = QtWidgets.QMainWindow()
-        self.home.ui.setupUi(self.home.form,self.home)
-        self.form.hide()
-        self.home.form.show()
+        self.home.showWindow("mainMenu")
+        
         
 if __name__ == "__main__":
     import sys

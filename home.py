@@ -19,6 +19,7 @@ class Ui_MainWindow(object):
         self.root = None
         self.pages = {"newExperiment":Ui_NewExperiment(),"mainMenu":Ui_MainMenu()}
         self.window = MainWindow
+        self.current = MainWindow
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(927, 600)
         icon = QtGui.QIcon()
@@ -149,10 +150,22 @@ class Ui_MainWindow(object):
         self.form = QtWidgets.QWidget()
         self.ui.setupUi(self.form,self)
         # we hide our current window
-        self.window.hide()
+        self.current.hide()
+        # we switch our self.current to the form
+        self.current = self.form
         # we show the start new experiment
         self.form.show()
-
+    def showWindow(self,name):
+        # print (name)
+        self.ui = self.pages[name]
+        self.form = QtWidgets.QMainWindow()
+        self.ui.setupUi(self.form,self)
+        # we hide our current window
+        self.current.hide()
+        # we switch with the form
+        self.current = self.form
+        # we show the start new experiment
+        self.form.show() 
         
 if __name__ == "__main__":
 
