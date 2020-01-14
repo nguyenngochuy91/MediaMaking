@@ -31,13 +31,13 @@ class Ui_MainMenu(object):
         
         # Update
         self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_3.setGeometry(QtCore.QRect(330, 240, 231, 27))
+        self.pushButton_3.setGeometry(QtCore.QRect(330, 310, 231, 27))
         self.pushButton_3.setObjectName("pushButton_3")
         
         
         # Visualize
         self.pushButton_4 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_4.setGeometry(QtCore.QRect(330, 310, 231, 27))
+        self.pushButton_4.setGeometry(QtCore.QRect(330, 380, 231, 27))
         self.pushButton_4.setObjectName("pushButton_4")
         self.pushButton_4.clicked.connect(self.visualize)
         
@@ -46,6 +46,10 @@ class Ui_MainMenu(object):
         self.pushButton_5.setGeometry(QtCore.QRect(330, 100, 231, 27))
         self.pushButton_5.setObjectName("pushButton_5")
         
+        # Modify button
+        self.pushButton_6 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_6.setGeometry(QtCore.QRect(330, 240, 231, 27))
+        self.pushButton_6.setObjectName("pushButton_6")
         
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -109,6 +113,7 @@ class Ui_MainMenu(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.label_2.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:20pt; color:#ff55ff;\">Main Menu</span></p><p align=\"center\"><br/></p></body></html>"))
         self.pushButton_2.setText(_translate("MainWindow", "Home"))
+        self.pushButton_6.setText(_translate("MainWindow", "Modify"))
         self.pushButton_3.setText(_translate("MainWindow", "Update"))
         self.pushButton_4.setText(_translate("MainWindow", "Visualize"))
         self.pushButton_5.setText(_translate("MainWindow", "Analyze"))

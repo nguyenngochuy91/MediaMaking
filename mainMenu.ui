@@ -50,7 +50,7 @@
     <property name="geometry">
      <rect>
       <x>330</x>
-      <y>240</y>
+      <y>310</y>
       <width>231</width>
       <height>27</height>
      </rect>
@@ -63,7 +63,7 @@
     <property name="geometry">
      <rect>
       <x>330</x>
-      <y>310</y>
+      <y>380</y>
       <width>231</width>
       <height>27</height>
      </rect>
@@ -85,6 +85,19 @@
      <string>Analyze</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton_6">
+    <property name="geometry">
+     <rect>
+      <x>330</x>
+      <y>240</y>
+      <width>231</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Modify</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -92,7 +105,7 @@
      <x>0</x>
      <y>0</y>
      <width>926</width>
-     <height>20</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
