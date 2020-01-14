@@ -97,7 +97,7 @@ class Bottle:
     ## write to a jason file using dic
     def writeJSON(self,outputFile):
         dic = self.generateDictionary()
-        print (dic)
+#        print (dic)
         try:
             json.dump(dic, outputFile,indent=4)
         except:

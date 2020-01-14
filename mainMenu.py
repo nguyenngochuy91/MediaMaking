@@ -148,15 +148,15 @@ class Ui_MainMenu(object):
         
     def visualize(self):
         graph = self.home.root.generateGraph()
-        self.home.root.writeJSON("data")
+#        self.home.root.writeJSON("data")
         graph.write_png("temp")
         pixmap = QtGui.QPixmap('temp')
-        newWidget = QtWidgets.QWidget()
-        newWidget.title = "Visualization"
-        label = QtWidgets.QLabel(newWidget)
+        self.newWidget = QtWidgets.QWidget()
+        self.newWidget.title = "Visualization"
+        label = QtWidgets.QLabel(self.newWidget)
         label.setPixmap(pixmap)
-        newWidget.resize(pixmap.width(),pixmap.height())
-        newWidget.show()
+        self.newWidget.resize(pixmap.width(),pixmap.height())
+        self.newWidget.show()
         # self.home.root.writeJSON("data")
 if __name__ == "__main__":
     import sys
