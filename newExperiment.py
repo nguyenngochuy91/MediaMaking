@@ -145,7 +145,7 @@ class Ui_NewExperiment(object):
                 return 
         self.vals.append(self.plainTextEdit.toPlainText())
         # store info into our self.root bottle object
-        print (self.vals)
+#        print (self.vals)
         self.home.root = Bottle(self.vals[0],self.vals[1],self.vals[2],self.vals[3],[],None)
         # go to next menu
         self.home.showWindow("mainMenu")

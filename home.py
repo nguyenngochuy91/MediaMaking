@@ -12,12 +12,13 @@ from PyQt5.QtWidgets import QFileDialog
 import sys
 from newExperiment import Ui_NewExperiment
 from mainMenu import Ui_MainMenu
+from updateMenu1 import Ui_updateMenu1
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         ## add all the widget class that store new experiment page,etc so that we just call this on the callback
         self.root = None
-        self.pages = {"newExperiment":Ui_NewExperiment(),"mainMenu":Ui_MainMenu()}
+        self.pages = {"newExperiment":Ui_NewExperiment(),"mainMenu":Ui_MainMenu(),"updateMenu1":Ui_updateMenu1()}
         self.window = MainWindow
         self.current = MainWindow
         MainWindow.setObjectName("MainWindow")

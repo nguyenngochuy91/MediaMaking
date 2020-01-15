@@ -36,7 +36,7 @@ class Ui_MainMenu(object):
         self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_3.setGeometry(QtCore.QRect(330, 310, 231, 27))
         self.pushButton_3.setObjectName("pushButton_3")
-        
+        self.pushButton_3.clicked.connect(self.update)
         
         # Visualize
         self.pushButton_4 = QtWidgets.QPushButton(self.centralwidget)
@@ -147,6 +147,7 @@ class Ui_MainMenu(object):
         self.home.current = self.home.window
         self.home.current.show()
         
+    # visualize button
     def visualize(self):
         graph = self.home.root.generateGraph()
 #        self.home.root.writeJSON("data")
@@ -160,6 +161,8 @@ class Ui_MainMenu(object):
         label = QtWidgets.QLabel(self.newWidget)
         label.setPixmap(pixmap)
         self.newWidget.resize(pixmap.width(),pixmap.height())
+#        self.newWidget.resize(218,139)
+        print (pixmap.width(),pixmap.height())
         # formlayout for our label
         formLayout =QFormLayout()
         groupBox = QGroupBox("Your current beautiful graph:")
@@ -176,6 +179,12 @@ class Ui_MainMenu(object):
         layout.addWidget(scroller)
         
         self.newWidget.show()
+    # update button
+    def update(self):
+        # provide the visualization of current graph
+        self.visualize() 
+        # we go to the update Page
+        self.home.showWindow("updateMenu1")
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

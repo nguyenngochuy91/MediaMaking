@@ -92,6 +92,10 @@ class Bottle:
             for child in children:
                 queue.append(child)
         return graph
+    # return a dictionary that maps each node from the root to its name, do so in bfs maner
+    def generateNames(self):
+#        dic = 
+        return
         
         
     ## write to a jason file using dic
