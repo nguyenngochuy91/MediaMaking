@@ -162,7 +162,7 @@ class Ui_MainMenu(object):
         label.setPixmap(pixmap)
         self.newWidget.resize(pixmap.width(),pixmap.height())
 #        self.newWidget.resize(218,139)
-        print (pixmap.width(),pixmap.height())
+        # print (pixmap.width(),pixmap.height())
         # formlayout for our label
         formLayout =QFormLayout()
         groupBox = QGroupBox("Your current beautiful graph:")

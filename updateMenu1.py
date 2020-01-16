@@ -8,7 +8,7 @@
 
 
 from PyQt5.QtWidgets import (QWidget, QSlider, QLineEdit, QLabel, QPushButton, QScrollArea,QApplication,
-                             QHBoxLayout, QVBoxLayout, QMainWindow,QCheckBox)
+                             QHBoxLayout, QVBoxLayout, QMainWindow,QCheckBox,QDialog)
 from PyQt5.QtCore import Qt, QSize
 from PyQt5 import QtWidgets,QtCore,QtGui
 from bottle import Bottle
@@ -55,13 +55,18 @@ class Ui_updateMenu1(object):
         self.label_2.setWordWrap(True)
         self.label_2.setObjectName("label_2")
         layout.addWidget(self.label_2)
-        self.allCheckBox = []
         
-        for i in range(1,50):
-            object = QCheckBox("Checkbox {}".format(i))
-            self.allCheckBox.append(object)
-            layout.addWidget(object)            
-            layout.addSpacing(20)
+        
+        
+        #### handle the checkbox
+        # this map a node name, to a check box
+        self.allCheckBox = {}    
+        # a map for node to name from root
+        self.nodeToName,self.nameToNode = self.root.generateNames()
+        # generate the labels base on root node, and store it into our allcheckbox
+        self.generateLabels(layout)
+        
+        
         
         # Ok button
         self.pushButton = QtWidgets.QPushButton(Form)
@@ -99,7 +104,11 @@ class Ui_updateMenu1(object):
         
     # generate all the check label
     def generateLabels(self,layout):
-        root = self.home.root
+        for node,name in self.nodeToName:
+            checkBox = QCheckBox("Media {}".format(name))
+            self.allCheckBox[name] = checkBox
+            layout.addWidget(checkBox)            
+            layout.addSpacing(20)            
         return
         
 ## button executions
@@ -108,24 +117,16 @@ class Ui_updateMenu1(object):
         self.home.showWindow("mainMenu")
     # ok button, store it into a bottle object, and go to menu
     def ok(self):
-        # check if all the fields are valid
-        self.vals = []
-        for field,fieldName in self.fields:
-            state = field.validator.validate(field.text(),0)[0]
-            if state == QtGui.QValidator.Acceptable:
-                self.vals.append(field.text())
-            else:
-                # prompt the user ofr the problem 
-                QtWidgets.QMessageBox.information(self.home.window, 'Error', 'You have enter invalid data in field {}!'.format(fieldName), QtWidgets.QMessageBox.Ok)
-                field.setFocusPolicy(QtCore.Qt.StrongFocus)
-                field.setFocus()
-                return 
-        self.vals.append(self.plainTextEdit.toPlainText())
-        # store info into our self.root bottle object
-#        print (self.vals)
-        self.home.root = Bottle(self.vals[0],self.vals[1],self.vals[2],self.vals[3],[],None)
-        # go to next menu
-        self.home.showWindow("mainMenu")
+        # get all the check box that was check
+        checkedNode = []
+        for node,nodeName in self.nodeToName:
+            checkbox = self.allCheckBox[nodeName]
+            if checkbox.isChecked():
+                checkedNode.append([node,nodeName])
+        # we generate a dialog
+        dialog = QDialog(self.form)
+        
+        
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

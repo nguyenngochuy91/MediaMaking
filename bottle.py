@@ -63,6 +63,7 @@ class Bottle:
         graph = pydot.Dot(graph_type='digraph')
         queue = [self]
         d = {}
+        nodeToName = []
         while queue:
             node = queue.pop()
             name = node.getName()
@@ -74,6 +75,7 @@ class Bottle:
             # generate newNode
             newNode = pydot.Node(info)
             newNode.obj_dict['name'] = info
+            nodeToName.append((newNode,name))
             parent = node.getParent()
             if parent:
                 newE      = pydot.Edge(d[parent],d[node],color="blue")
@@ -91,11 +93,14 @@ class Bottle:
             children = node.getChildren()
             for child in children:
                 queue.append(child)
-        return graph
+        return graph,nodeToName
     # return a dictionary that maps each node from the root to its name, do so in bfs maner
     def generateNames(self):
-#        dic = 
-        return
+        graph,nodeToName = self.generateGraph()
+        nameToNode = {}
+        for node,nodeName in nodeToName:
+            nameToNode[nodeName] = node
+        return nodeToName,nameToNode
         
         
     ## write to a jason file using dic
@@ -110,7 +115,7 @@ class Bottle:
                 handle.write(string)
     ## write pydot file to a png
     def writePNG(self,outputFile):
-        graph = self.generateGraph()
+        graph,nodeToName = self.generateGraph()
         graph.write_png(outputFile)
 A = Bottle("A",1,"",7,[],None)
 #AA = Bottle("AA",1,"",7,[],None)
