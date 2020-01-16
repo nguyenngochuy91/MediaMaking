@@ -10,7 +10,25 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 from bottle import Bottle
-
+class Validator(QtGui.QDoubleValidator):
+    def validate(self, value, pos):
+        text = value.strip().title()
+        try:
+            val = float(text)
+            if val<0 or val>14:
+                return QtGui.QValidator.Invalid, text, pos
+            else:
+                return QtGui.QValidator.Acceptable, text, pos
+        except:
+            # means that it has at least one letter
+            for num in "0123456789":
+                if num in text:
+                    return QtGui.QValidator.Invalid, text, pos
+            if text =="":
+                return QtGui.QValidator.Intermediate, text, pos 
+            return QtGui.QValidator.Acceptable, text, pos
+        return super(Validator, self).validate(value, pos)
+        
 class Ui_NewExperiment(object):
     def setupUi(self, Form,home):
         self.home = home
@@ -54,7 +72,7 @@ class Ui_NewExperiment(object):
         self.lineEdit_2.setGeometry(QtCore.QRect(130, 160, 691, 31))
         self.lineEdit_2.setText("")
         self.lineEdit_2.setObjectName("lineEdit_2")
-        self.lineEdit_2.validator = QtGui.QDoubleValidator()
+        self.lineEdit_2.validator = Validator(self.lineEdit_2)
         self.lineEdit_2.textChanged.connect(lambda: self.check_state(self.lineEdit_2))
         self.lineEdit_2.textChanged.emit(self.lineEdit_2.text())
         
