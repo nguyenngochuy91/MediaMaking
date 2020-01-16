@@ -8,16 +8,16 @@
 
 
 from PyQt5.QtWidgets import (QWidget, QSlider, QLineEdit, QLabel, QPushButton, QScrollArea,QApplication,
-                             QHBoxLayout, QVBoxLayout, QMainWindow,QCheckBox,QMessageBox)
+                             QHBoxLayout, QVBoxLayout, QMainWindow,QCheckBox)
 from PyQt5.QtCore import Qt, QSize
 from PyQt5 import QtWidgets,QtCore,QtGui
 from bottle import Bottle
 
-class Ui_updateMenu1(object):
+class Ui_updateMenu2(object):
     def setupUi(self, Form,home):
         self.home = home
         self.form = Form
-        Form.setObjectName("updateMenu1")
+        Form.setObjectName("updateMenu2")
         Form.resize(800, 600)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("microbiology.jpg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -49,7 +49,7 @@ class Ui_updateMenu1(object):
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
     
         layout = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
-        self.label_2 = QtWidgets.QLabel("<html><head/><body><p align=\"center\"><span style=\" font-size:20pt; color:#ff55ff;\">Please check on the media to update</span></p><p align=\"center\"><br/></p></body></html>")
+        self.label_2 = QtWidgets.QLabel("<html><head/><body><p align=\"center\"><span style=\" font-size:20pt; color:#ff55ff;\">Please fill out the info for each media you have chosen:</span></p><p align=\"center\"><br/></p></body></html>")
         self.label_2.setGeometry(QtCore.QRect(80, 0, 631, 51))
         self.label_2.setTextFormat(QtCore.Qt.RichText)
         self.label_2.setWordWrap(True)
@@ -116,35 +116,30 @@ class Ui_updateMenu1(object):
     def goMainMenu(self):
         self.home.showWindow("mainMenu")
     # ok button, store it into a bottle object, and go to menu
-    def ok(self):
-        # get all the check box that was check
-        checkedNode = []
-        for node,nodeName in self.nodeToName:
-            checkbox = self.allCheckBox[nodeName]
-            if checkbox.isChecked():
-                checkedNode.append([node,nodeName])
-        # we generate a message to show the user
-        if checkedNode:
-            message = "You have chose the following media(s):\n {} \n. Please press Ok to proceed, or Cancel to checkmark more media".format(", ".join([item[1] for item in checkedNode]))
-        else:
-            message = "You have not chosen anything, pressing Ok to go back to Main Menu, Cancel to checkmark more media"
-        # we create a qmessage box
-        buttonReply = QMessageBox.question(self.home.window, 'Warning!!!', message, QMessageBox.Ok | QMessageBox.Cancel, QMessageBox.Ok)
-        if buttonReply == QMessageBox.Ok:
-            if checkedNode:
-                # we share our checkedNode with our root home
-                self.home.updateNodes = checkedNode 
-                # we show the updateMenu2 window
-                self.home.showWindow("updateMenu2")
-            else:
-                self.home.showWindow("mainMenu")
-        else:
-            pass 
+#    def ok(self):
+#        # get all the check box that was check
+#        checkedNode = []
+#        for node,nodeName in self.nodeToName:
+#            checkbox = self.allCheckBox[nodeName]
+#            if checkbox.isChecked():
+#                checkedNode.append([node,nodeName])
+#        # we generate a message to show the user
+#        if checkedNode:
+#            message = "You have chose the following media(s):\n {} \n. Please press Ok to proceed, or Cancel to checkmark more media".format(", ".join(checkedNode))
+#        else:
+#            message = "You have not chosen anything, pressing Ok to go back to Main Menu, Cancel to checkmark more media"
+#        # we create a qmessage box
+#        buttonReply = QMessageBox.question(self.home.window, 'Warning!!!', message, QMessageBox.Ok | QMessageBox.Cancel, QMessageBox.Ok)
+#        if buttonReply == QMessageBox.Ok:
+#            if checkedNode:
+#                
+#        else:
+#            print('No clicked.')        
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     Form = QtWidgets.QMainWindow()
-    ui = Ui_updateMenu1()
+    ui = Ui_updateMenu2()
     ui.setupUi(Form,None)
     Form.show()
     sys.exit(app.exec_())

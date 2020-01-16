@@ -13,12 +13,12 @@ import sys
 from newExperiment import Ui_NewExperiment
 from mainMenu import Ui_MainMenu
 from updateMenu1 import Ui_updateMenu1
-
+from updateMenu2 import Ui_updateMenu2
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         ## add all the widget class that store new experiment page,etc so that we just call this on the callback
         self.root = None
-        self.pages = {"newExperiment":Ui_NewExperiment(),"mainMenu":Ui_MainMenu(),"updateMenu1":Ui_updateMenu1()}
+        self.pages = {"newExperiment":Ui_NewExperiment(),"mainMenu":Ui_MainMenu(),"updateMenu1":Ui_updateMenu1(),"updateMenu2":Ui_updateMenu2()}
         self.window = MainWindow
         self.current = MainWindow
         MainWindow.setObjectName("MainWindow")

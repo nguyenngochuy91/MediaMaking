@@ -149,7 +149,7 @@ class Ui_MainMenu(object):
         
     # visualize button
     def visualize(self):
-        graph = self.home.root.generateGraph()
+        graph,nodeToName = self.home.root.generateGraph()
 #        self.home.root.writeJSON("data")
         graph.write_png("temp")
         pixmap = QtGui.QPixmap('temp')
