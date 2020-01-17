@@ -8,7 +8,7 @@
 
 
 from PyQt5.QtWidgets import (QWidget, QSlider, QLineEdit, QLabel, QPushButton, QScrollArea,QApplication,
-                             QHBoxLayout, QVBoxLayout, QMainWindow,QCheckBox,QMessageBox)
+                             QHBoxLayout, QVBoxLayout, QMainWindow,QCheckBox,QMessageBox,QFormLayout,QGroupBox)
 from PyQt5.QtCore import Qt, QSize
 from PyQt5 import QtWidgets,QtCore,QtGui
 #from bottle import Bottle
@@ -113,9 +113,11 @@ class Ui_updateMenu1(object):
     # generate all the check label
     def generateLabels(self,layout):
         self.lineEdits = [QLineEdit() for i in range(len(self.nodeToName))]
+        maxLength = max([len(item[1]) for item in self.nodeToName])
         for i in range(len(self.nodeToName)):
             node,name = self.nodeToName[i]
-            label = QLabel("Media {}".format(name))
+            label = QLabel("Media {}{}:".format(name," "*(maxLength-len(name))))
+#            print (len(label.text()))
             self.lineEdits[i].validator = QtGui.QIntValidator(0,10)
             self.lineEdits[i].textChanged.connect(partial(self.checkState,i))
             self.lineEdits[i].textChanged.emit(self.lineEdits[i].text())
@@ -130,7 +132,7 @@ class Ui_updateMenu1(object):
     # check the label
         ## validation method for user input with color
     def checkState(self,index):
-        print ("my index:",index)
+#        print ("my index:",index)
         validator = self.lineEdits[index].validator
         # print (sender.text())
         state = validator.validate(self.lineEdits[index].text(), 0)[0]
@@ -148,28 +150,68 @@ class Ui_updateMenu1(object):
     # ok button, store it into a bottle object, and go to menu
     def ok(self):
         # get all the check box that was check
-        checkedNode = []
+        checkedNodes = []
         for node,nodeName in self.nodeToName:
             checkbox = self.allCheckBox[nodeName]
-            if checkbox.isChecked():
-                checkedNode.append([node,nodeName])
+            val = int(checkbox.text())
+            if val>0:
+                checkedNodes.append([node,nodeName,val])
         # we generate a message to show the user
-        if checkedNode:
-            message = "You have chose the following media(s):\n {}. \nPlease press Ok to proceed, or Cancel to checkmark more media".format(", ".join([item[1] for item in checkedNode]))
+        if checkedNodes:
+            message = "You have chose the following media(s):\n {}. \nPlease press Ok to proceed, or Cancel to checkmark more media".format(", ".join([item[1] for item in checkedNodes]))
         else:
             message = "You have not chosen anything, pressing Ok to go back to Main Menu, Cancel to checkmark more media"
         # we create a qmessage box
         buttonReply = QMessageBox.question(self.home.window, 'Warning!!!', message, QMessageBox.Ok | QMessageBox.Cancel, QMessageBox.Ok)
         if buttonReply == QMessageBox.Ok:
-            if checkedNode:
+            if checkedNodes:
                 # we share our checkedNode with our root home
-                self.home.updateNodes = [item[0] for item in checkedNode] 
+                self.home.updateNodes = checkedNodes
+                
+                # we need to make a deep copy of our root node, and color the node with names in checkedNodes as red
+                self.deepCopyRoot = self.root.deepCopy()                
+                
                 # we show the updateMenu2 window
                 self.home.showWindow({"name":"updateMenu2"})
+        
             else:
                 self.home.showWindow({"name":"mainMenu"})
         else:
             pass 
+    def visualize(self):
+        if self.home.root:
+            graph,nodeToName = self.home.root.generateGraph()
+    #        self.home.root.writeJSON("data")
+            graph.write_png("temp")
+            pixmap = QtGui.QPixmap('temp')
+            # generate a new widget to show
+            self.newWidget = QtWidgets.QWidget()
+            self.newWidget.setWindowTitle("Visualization")
+            
+            # label object
+            label = QtWidgets.QLabel(self.newWidget)
+            label.setPixmap(pixmap)
+            self.newWidget.resize(pixmap.width(),pixmap.height())
+    #        self.newWidget.resize(218,139)
+            # print (pixmap.width(),pixmap.height())
+            # formlayout for our label
+            formLayout =QFormLayout()
+            groupBox = QGroupBox("Your current beautiful graph:")
+            formLayout.addRow(label)
+            groupBox.setLayout(formLayout)
+    #         add scrollable
+            scroller = QtWidgets.QScrollArea()
+            scroller.setWidget(groupBox)
+            scroller.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+            scroller.setWidgetResizable(True)
+            
+            # main layout
+            layout = QVBoxLayout(self.newWidget)
+            layout.addWidget(scroller)
+            
+            self.newWidget.show()
+        else:
+            QtWidgets.QMessageBox.information(self.home.window, 'Error', 'You have no data to visualize yet, please either create a new experiment, or open a file', QtWidgets.QMessageBox.Ok)
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

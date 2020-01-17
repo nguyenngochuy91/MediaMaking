@@ -46,7 +46,7 @@ class Ui_MainMenu(object):
         self.pushButton_4 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_4.setGeometry(QtCore.QRect(330, 450, 231, 27))
         self.pushButton_4.setObjectName("pushButton_4")
-        self.pushButton_4.clicked.connect(self.visualize)
+        self.pushButton_4.clicked.connect(self.home.visualize)
         
         # Analyze
         self.pushButton_5 = QtWidgets.QPushButton(self.centralwidget)
@@ -169,45 +169,10 @@ class Ui_MainMenu(object):
         self.home.current = self.home.window
         self.home.current.show()
         
-    # visualize button
-    def visualize(self):
-        if self.home.root:
-            graph,nodeToName = self.home.root.generateGraph()
-    #        self.home.root.writeJSON("data")
-            graph.write_png("temp")
-            pixmap = QtGui.QPixmap('temp')
-            # generate a new widget to show
-            self.newWidget = QtWidgets.QWidget()
-            self.newWidget.setWindowTitle("Visualization")
-            
-            # label object
-            label = QtWidgets.QLabel(self.newWidget)
-            label.setPixmap(pixmap)
-            self.newWidget.resize(pixmap.width(),pixmap.height())
-    #        self.newWidget.resize(218,139)
-            # print (pixmap.width(),pixmap.height())
-            # formlayout for our label
-            formLayout =QFormLayout()
-            groupBox = QGroupBox("Your current beautiful graph:")
-            formLayout.addRow(label)
-            groupBox.setLayout(formLayout)
-    #         add scrollable
-            scroller = QtWidgets.QScrollArea()
-            scroller.setWidget(groupBox)
-            scroller.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
-            scroller.setWidgetResizable(True)
-            
-            # main layout
-            layout = QVBoxLayout(self.newWidget)
-            layout.addWidget(scroller)
-            
-            self.newWidget.show()
-        else:
-            QtWidgets.QMessageBox.information(self.home.window, 'Error', 'You have no data to visualize yet, please either create a new experiment, or open a file', QtWidgets.QMessageBox.Ok)
     # update button
     def update(self):
         # provide the visualization of current graph
-        self.visualize() 
+        self.home.visualize() 
         # we go to the update Page
         if self.home.root:
             self.home.showWindow({"name":"updateMenu1"})

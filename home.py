@@ -8,7 +8,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QFileDialog,QFormLayout,QGroupBox,QVBoxLayout
 import sys
 import json
 from bottle import Bottle
@@ -22,6 +22,8 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         ## add all the widget class that store new experiment page,etc so that we just call this on the callback
         self.root = None
+        # update nodes will have format [[<pydot.Node object at 0x7f0d0403bf28>, 'A', 1],..., [<pydot.Node object at 0x7f0d040127f0>, 'AD', 2]]
+
         self.updateNodes = None
         self.pages = {"newExperiment":Ui_NewExperiment(),"mainMenu":Ui_MainMenu(),"updateMenu1":Ui_updateMenu1(),"updateMenu2":Ui_updateMenu2()}
         self.window = MainWindow
@@ -181,6 +183,40 @@ class Ui_MainWindow(object):
         self.form.show() 
         # we switch with the form
         self.current = self.form
+    def visualize(self):
+        if self.root:
+            graph,nodeToName = self.root.generateGraph()
+    #        self.home.root.writeJSON("data")
+            graph.write_png("temp")
+            pixmap = QtGui.QPixmap('temp')
+            # generate a new widget to show
+            self.newWidget = QtWidgets.QWidget()
+            self.newWidget.setWindowTitle("Visualization")
+            
+            # label object
+            label = QtWidgets.QLabel(self.newWidget)
+            label.setPixmap(pixmap)
+            self.newWidget.resize(pixmap.width(),pixmap.height())
+    #        self.newWidget.resize(218,139)
+            # print (pixmap.width(),pixmap.height())
+            # formlayout for our label
+            formLayout =QFormLayout()
+            groupBox = QGroupBox("Your current beautiful graph:")
+            formLayout.addRow(label)
+            groupBox.setLayout(formLayout)
+    #         add scrollable
+            scroller = QtWidgets.QScrollArea()
+            scroller.setWidget(groupBox)
+            scroller.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+            scroller.setWidgetResizable(True)
+            
+            # main layout
+            layout = QVBoxLayout(self.newWidget)
+            layout.addWidget(scroller)
+            
+            self.newWidget.show()
+        else:
+            QtWidgets.QMessageBox.information(self.window, 'Error', 'You have no data to visualize yet, please either create a new experiment, or open a file', QtWidgets.QMessageBox.Ok)
 if __name__ == "__main__":
 
     app = QtWidgets.QApplication(sys.argv)

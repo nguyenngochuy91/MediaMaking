@@ -59,7 +59,7 @@ class Bottle:
             dic[self.name]["Children:"].update(childDic)
         return dic
     # generate a digraph to visualization
-    def generateGraph(self):
+    def generateGraph(self,updateNodes = set()):
         # generate a digraph for Dot
         graph = pydot.Dot(graph_type='digraph')
         queue = [self]
@@ -74,7 +74,10 @@ class Bottle:
             info = "name: {}\ndate: {}\npH: {}\nnotes: {}".format(name,date,ph,notes)
             d[node] = info
             # generate newNode
-            newNode = pydot.Node(info)
+            if name in updateNodes:
+                newNode = pydot.Node(info, style="filled", fillcolor="red")
+            else:
+                newNode = pydot.Node(info)
             newNode.obj_dict['name'] = info
             nodeToName.append((newNode,name))
             parent = node.getParent()
@@ -83,6 +86,7 @@ class Bottle:
                 graph.add_edge(newE)
             else:
                 graph.add_node(newNode)
+                
             # attribute = G[parent][children]
             # v         = float(attribute['volume'])
             # add       = float(attribute['add'])
@@ -138,14 +142,18 @@ class Bottle:
         bottle = Bottle(name,dic["Ph:"],dic["Date:"],dic["Notes:"],[],None)
         dfs(bottle,dic["Children:"])
         return bottle
-#    def __repr__(self):      
-#        string = "name: {} \ndate: {}\nparent: {}\nph: {}\nnotes: {}\nchildren: {}".format(
-#        self.name,self.date,self.parent,self.ph,self.notes,self.children)
-#        return string
-#    def __str__(self):      
-#        string = "name: {} \ndate: {}\nparent: {}\nph: {}\nnotes: {}\nchildren: {}".format(
-#        self.name,self.date,self.parent,self.ph,self.notes,self.children)
-#        return string                
+    
+    # return a deep copy of itself
+    def deepCopy(self):
+        def dfs(currentNode):
+            newNode = Bottle(currentNode.name,currentNode.ph,currentNode.date,currentNode.notes,[],currentNode.parent)
+            children = []            
+            for child in currentNode.children:
+                newChild = dfs(child)
+                children.append(newChild)
+            newNode.updateChildren(children)
+            return newNode
+        return dfs(self)
 A = Bottle("A",1,"",7,[],None)
 AA = Bottle("AA",1,"",7,[],None)
 AB = Bottle("AB",1,"",7,[],None)
