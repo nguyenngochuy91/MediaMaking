@@ -10,7 +10,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog,QGroupBox,QFormLayout,QVBoxLayout
 #from PyQt5.QtCore import Qt
 #import pydot # to visualize
-
+import json
+from bottle import Bottle
 
 class Ui_MainMenu(object):
     def setupUi(self, MainWindow,home):
@@ -18,6 +19,9 @@ class Ui_MainMenu(object):
         self.window = MainWindow
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(926, 598)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("microbiology.jpg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        MainWindow.setWindowIcon(icon)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
@@ -34,13 +38,13 @@ class Ui_MainMenu(object):
         
         # Update
         self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_3.setGeometry(QtCore.QRect(330, 310, 231, 27))
+        self.pushButton_3.setGeometry(QtCore.QRect(330, 380, 231, 27))
         self.pushButton_3.setObjectName("pushButton_3")
         self.pushButton_3.clicked.connect(self.update)
         
         # Visualize
         self.pushButton_4 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_4.setGeometry(QtCore.QRect(330, 380, 231, 27))
+        self.pushButton_4.setGeometry(QtCore.QRect(330, 450, 231, 27))
         self.pushButton_4.setObjectName("pushButton_4")
         self.pushButton_4.clicked.connect(self.visualize)
         
@@ -53,6 +57,12 @@ class Ui_MainMenu(object):
         self.pushButton_6 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_6.setGeometry(QtCore.QRect(330, 240, 231, 27))
         self.pushButton_6.setObjectName("pushButton_6")
+        
+        # start new experiment button
+        self.pushButton_7 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_7.setGeometry(QtCore.QRect(330, 310, 231, 27))
+        self.pushButton_7.setObjectName("pushButton_2")
+        self.pushButton_7.clicked.connect(lambda: self.home.show({"name":"newExperiment"}))        
         
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -114,6 +124,7 @@ class Ui_MainMenu(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.pushButton_7.setText(_translate("MainWindow", "Start new Experiment"))        
         self.label_2.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:20pt; color:#ff55ff;\">Main Menu</span></p><p align=\"center\"><br/></p></body></html>"))
         self.pushButton_2.setText(_translate("MainWindow", "Home"))
         self.pushButton_6.setText(_translate("MainWindow", "Modify"))
@@ -125,19 +136,30 @@ class Ui_MainMenu(object):
         self.actionDecumentation.setText(_translate("MainWindow", "Documentation"))
         self.actionDecumentation.setToolTip(_translate("MainWindow", "Documentation"))
         self.actionOpen_File.setText(_translate("MainWindow", "Open File"))
+        self.actionOpen_File.setShortcut(_translate("MainWindow", "Ctrl+O"))
         self.actionSave_File_As.setText(_translate("MainWindow", "Save File As"))
+        self.actionSave_File_As.setShortcut(_translate("MainWindow", "Ctrl+Shift+S"))
         self.actionExit.setText(_translate("MainWindow", "Exit"))
-
+        self.actionExit.setShortcut(_translate("MainWindow", "Ctrl+Q"))
 
     def openFile(self):
-        name,_ = QFileDialog.getOpenFileName(self.window, "Open File")
+        name,_ = QFileDialog.getOpenFileName(self.home.window, "Open File")
         if name:
             # we store the file and bring us to another frame
-            file = open(name,"r")
+            with open(name, "r") as read_file:
+                data = json.load(read_file)
+                dummyBottle = Bottle("",0,"",0,[],None)
+                self.home.root = dummyBottle.load(data)
+                # we go to the main menu
+#                self.showWindow("mainMenu")
             
     def saveFile(self):
-        name, _ = QFileDialog.getSaveFileName(self.window, "Save File")
-        # implement saving ...
+        if self.home.root == None:
+            QtWidgets.QMessageBox.information(self.home.window, 'Error', 'You have no data to store yet, please either create a new experiment, or open a file', QtWidgets.QMessageBox.Ok)
+        else:
+            name, _ = QFileDialog.getSaveFileName(self.home.window, "Save File As")
+            self.home.root.writePNG(name+".png")
+            self.home.root.writeJSON(name+".txt")
         
     def closeFile(self):
         sys.exit(app.exec_())
@@ -149,42 +171,46 @@ class Ui_MainMenu(object):
         
     # visualize button
     def visualize(self):
-        graph,nodeToName = self.home.root.generateGraph()
-#        self.home.root.writeJSON("data")
-        graph.write_png("temp")
-        pixmap = QtGui.QPixmap('temp')
-        # generate a new widget to show
-        self.newWidget = QtWidgets.QWidget()
-        self.newWidget.setWindowTitle("Visualization")
-        
-        # label object
-        label = QtWidgets.QLabel(self.newWidget)
-        label.setPixmap(pixmap)
-        self.newWidget.resize(pixmap.width(),pixmap.height())
-#        self.newWidget.resize(218,139)
-        # print (pixmap.width(),pixmap.height())
-        # formlayout for our label
-        formLayout =QFormLayout()
-        groupBox = QGroupBox("Your current beautiful graph:")
-        formLayout.addRow(label)
-        groupBox.setLayout(formLayout)
-#         add scrollable
-        scroller = QtWidgets.QScrollArea()
-        scroller.setWidget(groupBox)
-        scroller.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
-        scroller.setWidgetResizable(True)
-        
-        # main layout
-        layout = QVBoxLayout(self.newWidget)
-        layout.addWidget(scroller)
-        
-        self.newWidget.show()
+        if self.home.root:
+            graph,nodeToName = self.home.root.generateGraph()
+    #        self.home.root.writeJSON("data")
+            graph.write_png("temp")
+            pixmap = QtGui.QPixmap('temp')
+            # generate a new widget to show
+            self.newWidget = QtWidgets.QWidget()
+            self.newWidget.setWindowTitle("Visualization")
+            
+            # label object
+            label = QtWidgets.QLabel(self.newWidget)
+            label.setPixmap(pixmap)
+            self.newWidget.resize(pixmap.width(),pixmap.height())
+    #        self.newWidget.resize(218,139)
+            # print (pixmap.width(),pixmap.height())
+            # formlayout for our label
+            formLayout =QFormLayout()
+            groupBox = QGroupBox("Your current beautiful graph:")
+            formLayout.addRow(label)
+            groupBox.setLayout(formLayout)
+    #         add scrollable
+            scroller = QtWidgets.QScrollArea()
+            scroller.setWidget(groupBox)
+            scroller.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+            scroller.setWidgetResizable(True)
+            
+            # main layout
+            layout = QVBoxLayout(self.newWidget)
+            layout.addWidget(scroller)
+            
+            self.newWidget.show()
+        else:
+            QtWidgets.QMessageBox.information(self.home.window, 'Error', 'You have no data to visualize yet, please either create a new experiment, or open a file', QtWidgets.QMessageBox.Ok)
     # update button
     def update(self):
         # provide the visualization of current graph
         self.visualize() 
         # we go to the update Page
-        self.home.showWindow("updateMenu1")
+        if self.home.root:
+            self.home.showWindow({"name":"updateMenu1"})
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

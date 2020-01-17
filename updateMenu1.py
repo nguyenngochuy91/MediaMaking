@@ -28,35 +28,27 @@ class Ui_updateMenu1(object):
         
         self.centralwidget = QtWidgets.QWidget(Form)
         # self.centralWidget.setObjectName("centralWidget")
-        layout = QtWidgets.QVBoxLayout(self.centralwidget)
-    
+        allLayout = QtWidgets.QVBoxLayout(self.centralwidget)
+        layout1 = QtWidgets.QVBoxLayout()
         self.scrollArea = QtWidgets.QScrollArea(self.centralwidget)
         self.scrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.scrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.scrollArea.setWidgetResizable(True)
-        # self.scrollArea.setGeometry(QtCore.QRect(0, 0, 1131, 951))
-        # self.scrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
-        # self.scrollArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
-        # self.scrollArea.setWidgetResizable(True)
-        # self.scrollArea.setObjectName("scrollArea")
-        # self.scrollArea.setEnabled(True)
-        layout.addWidget(self.scrollArea)
-    
+        layout1.addWidget(self.scrollArea)
+        allLayout.addLayout(layout1)
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(300, 400, 500, 500))
         # self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
     
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
     
-        layout = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
+        layout2 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
         self.label_2 = QtWidgets.QLabel("<html><head/><body><p align=\"center\"><span style=\" font-size:20pt; color:#ff55ff;\">Please check on the media to update</span></p><p align=\"center\"><br/></p></body></html>")
         self.label_2.setGeometry(QtCore.QRect(80, 0, 631, 51))
         self.label_2.setTextFormat(QtCore.Qt.RichText)
         self.label_2.setWordWrap(True)
         self.label_2.setObjectName("label_2")
-        layout.addWidget(self.label_2)
-        
-        
+        layout2.addWidget(self.label_2)
         
         #### handle the checkbox
         # this map a node name, to a check box
@@ -64,24 +56,26 @@ class Ui_updateMenu1(object):
         # a map for node to name from root
         self.nodeToName,self.nameToNode = self.home.root.generateNames()
         # generate the labels base on root node, and store it into our allcheckbox
-        self.generateLabels(layout)
+        self.generateLabels(layout2)
         
         
-        
+        layout3 = QtWidgets.QHBoxLayout()
+        allLayout.addLayout(layout3)
         # Ok button
-        self.pushButton = QtWidgets.QPushButton(Form)
+        self.pushButton = QtWidgets.QPushButton()
         self.pushButton.setGeometry(QtCore.QRect(320, 250, 61, 41))
         self.pushButton.setObjectName("pushButton")
         self.pushButton.clicked.connect(self.ok)
 
 
         # Cancel button
-        self.pushButton_2 = QtWidgets.QPushButton(Form)
+        self.pushButton_2 = QtWidgets.QPushButton()
         self.pushButton_2.setGeometry(QtCore.QRect(500, 250, 61, 41))
         self.pushButton_2.setObjectName("pushButton_2")
         self.pushButton_2.clicked.connect(self.goMainMenu)
         
-        
+        layout3.addWidget(self.pushButton)
+        layout3.addWidget(self.pushButton_2)
         self.menubar = QtWidgets.QMenuBar(Form)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 25))
         self.menubar.setObjectName("menubar")
@@ -105,16 +99,37 @@ class Ui_updateMenu1(object):
     # generate all the check label
     def generateLabels(self,layout):
         for node,name in self.nodeToName:
-            checkBox = QCheckBox("Media {}".format(name))
-            self.allCheckBox[name] = checkBox
-            layout.addWidget(checkBox)            
+            label = QtWidgets.QLabel("Media {}".format(name))
+            lineEdit = QtWidgets.QLineEdit()
+            lineEdit.setText("0")
+            validator = QtGui.QIntValidator()
+            lineEdit.setValidator(validator)
+            lineEdit.textChanged.connect(lambda: self.checkState(lineEdit))
+            lineEdit.textChanged.emit(lineEdit.text())
+            horizontalLayout = QtWidgets.QHBoxLayout()
+            horizontalLayout.addWidget(label)
+            horizontalLayout.addWidget(lineEdit)
+            self.allCheckBox[name] = lineEdit
+            layout.addLayout(horizontalLayout)            
             layout.addSpacing(20)            
         return
-        
+    # check the label
+        ## validation method for user input with color
+    def checkState(self,sender):
+        validator = sender.validator
+        # print (sender.text())
+        state = validator.validate(sender.text(), 0)[0]
+        if state == QtGui.QValidator.Acceptable:
+            color = '#c4df9b' # green
+        elif state == QtGui.QValidator.Intermediate:
+            color = '#fff79a' # yellow
+        else:
+            color = '#f6989d' # red
+        sender.setStyleSheet('QLineEdit { background-color: %s }' % color)
 ## button executions
     # cancel button, go back to mainMenu
     def goMainMenu(self):
-        self.home.showWindow("mainMenu")
+        self.home.showWindow({"name":"mainMenu"})
     # ok button, store it into a bottle object, and go to menu
     def ok(self):
         # get all the check box that was check
@@ -125,7 +140,7 @@ class Ui_updateMenu1(object):
                 checkedNode.append([node,nodeName])
         # we generate a message to show the user
         if checkedNode:
-            message = "You have chose the following media(s):\n {} \n. Please press Ok to proceed, or Cancel to checkmark more media".format(", ".join([item[1] for item in checkedNode]))
+            message = "You have chose the following media(s):\n {}. \nPlease press Ok to proceed, or Cancel to checkmark more media".format(", ".join([item[1] for item in checkedNode]))
         else:
             message = "You have not chosen anything, pressing Ok to go back to Main Menu, Cancel to checkmark more media"
         # we create a qmessage box
@@ -133,11 +148,11 @@ class Ui_updateMenu1(object):
         if buttonReply == QMessageBox.Ok:
             if checkedNode:
                 # we share our checkedNode with our root home
-                self.home.updateNodes = checkedNode 
+                self.home.updateNodes = [item[0] for item in checkedNode] 
                 # we show the updateMenu2 window
-                self.home.showWindow("updateMenu2")
+                self.home.showWindow({"name":"updateMenu2"})
             else:
-                self.home.showWindow("mainMenu")
+                self.home.showWindow({"name":"mainMenu"})
         else:
             pass 
 if __name__ == "__main__":

@@ -49,7 +49,8 @@ class Bottle:
         dic = {self.name:{"Date:":self.date,
                           "Ph:":self.ph,
                           "Notes:":self.notes,
-                          "Children:":{} } } 
+                          "Children:":{} , "Parent:": self.parent.name if self.parent else None} 
+                          } 
         # print (self.name)
         children = self.getChildren()
         for child in children:
@@ -117,6 +118,34 @@ class Bottle:
     def writePNG(self,outputFile):
         graph,nodeToName = self.generateGraph()
         graph.write_png(outputFile)
+        
+    # loading a dic file, and return a bottle object
+    def load(self,dictionary):
+        def dfs(currentNode,dictionary):
+            if dictionary:
+                children = []
+                for child in dictionary:
+                    name = child
+                    notes = dictionary[child]["Notes:"]
+                    parent = dictionary[child]["Parent:"]
+                    ph = dictionary[child]["Ph:"]
+                    date = dictionary[child]["Date:"]
+                    bottle = Bottle(name,ph,date,notes,[],parent)
+                    dfs(bottle,dictionary[name]["Children:"])
+                    children.append(bottle)
+                currentNode.updateChildren(children)
+        name,dic = dictionary.popitem()
+        bottle = Bottle(name,dic["Ph:"],dic["Date:"],dic["Notes:"],[],None)
+        dfs(bottle,dic["Children:"])
+        return bottle
+#    def __repr__(self):      
+#        string = "name: {} \ndate: {}\nparent: {}\nph: {}\nnotes: {}\nchildren: {}".format(
+#        self.name,self.date,self.parent,self.ph,self.notes,self.children)
+#        return string
+#    def __str__(self):      
+#        string = "name: {} \ndate: {}\nparent: {}\nph: {}\nnotes: {}\nchildren: {}".format(
+#        self.name,self.date,self.parent,self.ph,self.notes,self.children)
+#        return string                
 A = Bottle("A",1,"",7,[],None)
 AA = Bottle("AA",1,"",7,[],None)
 AB = Bottle("AB",1,"",7,[],None)
@@ -127,5 +156,7 @@ A.updateChildren([AA,AB,AC,AD])
 AAA = Bottle("AAA",1,"",7,[],None)
 AAB = Bottle("AAB",1,"",7,[],None)
 AA.updateChildren([AAA,AAB])
-
 A.writeJSON("data")
+#dictionary =json.load(open("data","r"))
+#B = Bottle("",0,"",0,[],None)
+#C = B.load(dictionary)

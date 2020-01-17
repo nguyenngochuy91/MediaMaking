@@ -108,7 +108,7 @@ class Ui_NewExperiment(object):
         self.pushButton_2 = QtWidgets.QPushButton(Form)
         self.pushButton_2.setGeometry(QtCore.QRect(500, 500, 61, 41))
         self.pushButton_2.setObjectName("pushButton_2")
-        self.pushButton_2.clicked.connect(self.goHome)
+        self.pushButton_2.clicked.connect(self.cancel)
         
         
         self.label_6 = QtWidgets.QLabel(Form)
@@ -143,10 +143,8 @@ class Ui_NewExperiment(object):
         sender.setStyleSheet('QLineEdit { background-color: %s }' % color)
     ## button executions
     # cancel button, go back to home
-    def goHome(self):
-        self.home.current.hide()
-        self.home.current = self.home.window
-        self.home.current.show()
+    def cancel(self):
+        self.home.showWindow({"name":"mainMenu"})
     # ok button, store it into a bottle object, and go to menu
     def ok(self):
         # check if all the fields are valid
@@ -166,7 +164,7 @@ class Ui_NewExperiment(object):
 #        print (self.vals)
         self.home.root = Bottle(self.vals[0],self.vals[1],self.vals[2],self.vals[3],[],None)
         # go to next menu
-        self.home.showWindow("mainMenu")
+        self.home.showWindow({"name":"Menu"})
         
         
 if __name__ == "__main__":

@@ -10,14 +10,19 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
 import sys
+import json
+from bottle import Bottle
 from newExperiment import Ui_NewExperiment
 from mainMenu import Ui_MainMenu
 from updateMenu1 import Ui_updateMenu1
 from updateMenu2 import Ui_updateMenu2
+
+
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         ## add all the widget class that store new experiment page,etc so that we just call this on the callback
         self.root = None
+        self.updateNodes = None
         self.pages = {"newExperiment":Ui_NewExperiment(),"mainMenu":Ui_MainMenu(),"updateMenu1":Ui_updateMenu1(),"updateMenu2":Ui_updateMenu2()}
         self.window = MainWindow
         self.current = MainWindow
@@ -42,7 +47,7 @@ class Ui_MainWindow(object):
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_2.setGeometry(QtCore.QRect(340, 100, 231, 27))
         self.pushButton_2.setObjectName("pushButton_2")
-        self.pushButton_2.clicked.connect(lambda: self.show("newExperiment"))
+        self.pushButton_2.clicked.connect(lambda: self.showWindow({"name":"mainMenu"}))
         
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
         self.label_2.setGeometry(QtCore.QRect(140, 10, 631, 51))
@@ -120,7 +125,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "NhiMediaTracking"))
-        self.pushButton_2.setText(_translate("MainWindow", "Start new Experiment"))
+        self.pushButton_2.setText(_translate("MainWindow", "Main Menu"))
         self.label_2.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:20pt; color:#ff55ff;\">Welcome to the Media Tracking Program</span></p></body></html>"))
         self.menuHelp.setTitle(_translate("MainWindow", "Help"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
@@ -137,16 +142,25 @@ class Ui_MainWindow(object):
         name,_ = QFileDialog.getOpenFileName(MainWindow, "Open File")
         if name:
             # we store the file and bring us to another frame
-            file = open(name,"r")
-            
+            with open(name, "r") as read_file:
+                data = json.load(read_file)
+                dummyBottle = Bottle("",0,"",0,[],None)
+                self.root = dummyBottle.load(data)
+                # we go to the main menu
+                self.showWindow({"name":"mainMenu"})
     def saveFile(self):
-        name, _ = QFileDialog.getSaveFileName(MainWindow, "Save File")
-        # implement saving ...
+        if self.root == None:
+            QtWidgets.QMessageBox.information(self.window, 'Error', 'You have no data to store yet, please either create a new experiment, or open a file', QtWidgets.QMessageBox.Ok)
+        else:
+            name, _ = QFileDialog.getSaveFileName(MainWindow, "Save File")
+            self.root.writePNG(name+".png")
+            self.root.writeJSON(name+".txt")
         
     def closeFile(self):
         sys.exit(app.exec_())
         
-    def show(self,name):
+    def show(self,dic):
+        name = dic["name"]
         self.ui = self.pages[name]
         self.form = QtWidgets.QWidget()
         self.ui.setupUi(self.form,self)
@@ -156,18 +170,17 @@ class Ui_MainWindow(object):
         self.current = self.form
         # we show the start new experiment
         self.form.show()
-    def showWindow(self,name):
-        # print (name)
+    def showWindow(self,dic):
+        name = dic["name"]
         self.ui = self.pages[name]
         self.form = QtWidgets.QMainWindow()
         self.ui.setupUi(self.form,self)
         # we hide our current window
         self.current.hide()
-        # we switch with the form
-        self.current = self.form
         # we show the start new experiment
         self.form.show() 
-        
+        # we switch with the form
+        self.current = self.form
 if __name__ == "__main__":
 
     app = QtWidgets.QApplication(sys.argv)
