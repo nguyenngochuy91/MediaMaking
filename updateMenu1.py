@@ -11,8 +11,22 @@ from PyQt5.QtWidgets import (QWidget, QSlider, QLineEdit, QLabel, QPushButton, Q
                              QHBoxLayout, QVBoxLayout, QMainWindow,QCheckBox,QMessageBox)
 from PyQt5.QtCore import Qt, QSize
 from PyQt5 import QtWidgets,QtCore,QtGui
-from bottle import Bottle
+#from bottle import Bottle
+from functools import partial
 
+class Validator(QtGui.QIntValidator):
+    def validate(self, value, pos):
+        text = value.strip().title()
+        try:
+            val = int(text)
+            if val<0 or val>10:
+                return QtGui.QValidator.Invalid, text, pos
+            else:
+                return QtGui.QValidator.Acceptable, text, pos
+        except:
+            # means that it has at least one letter
+            return QtGui.QValidator.Invalid, text, pos
+        return super(Validator, self).validate(value, pos)
 class Ui_updateMenu1(object):
     def setupUi(self, Form,home):
         self.home = home
@@ -98,34 +112,35 @@ class Ui_updateMenu1(object):
         
     # generate all the check label
     def generateLabels(self,layout):
-        for node,name in self.nodeToName:
-            label = QtWidgets.QLabel("Media {}".format(name))
-            lineEdit = QtWidgets.QLineEdit()
-            lineEdit.setText("0")
-            validator = QtGui.QIntValidator()
-            lineEdit.setValidator(validator)
-            lineEdit.textChanged.connect(lambda: self.checkState(lineEdit))
-            lineEdit.textChanged.emit(lineEdit.text())
+        self.lineEdits = [QLineEdit() for i in range(len(self.nodeToName))]
+        for i in range(len(self.nodeToName)):
+            node,name = self.nodeToName[i]
+            label = QLabel("Media {}".format(name))
+            self.lineEdits[i].validator = QtGui.QIntValidator(0,10)
+            self.lineEdits[i].textChanged.connect(partial(self.checkState,i))
+            self.lineEdits[i].textChanged.emit(self.lineEdits[i].text())
+            self.lineEdits[i].setText("0")
             horizontalLayout = QtWidgets.QHBoxLayout()
             horizontalLayout.addWidget(label)
-            horizontalLayout.addWidget(lineEdit)
-            self.allCheckBox[name] = lineEdit
+            horizontalLayout.addWidget(self.lineEdits[i])
+            self.allCheckBox[name] = self.lineEdits[i]
             layout.addLayout(horizontalLayout)            
-            layout.addSpacing(20)            
+            layout.addSpacing(20)        
         return
     # check the label
         ## validation method for user input with color
-    def checkState(self,sender):
-        validator = sender.validator
+    def checkState(self,index):
+        print ("my index:",index)
+        validator = self.lineEdits[index].validator
         # print (sender.text())
-        state = validator.validate(sender.text(), 0)[0]
+        state = validator.validate(self.lineEdits[index].text(), 0)[0]
         if state == QtGui.QValidator.Acceptable:
             color = '#c4df9b' # green
         elif state == QtGui.QValidator.Intermediate:
             color = '#fff79a' # yellow
         else:
             color = '#f6989d' # red
-        sender.setStyleSheet('QLineEdit { background-color: %s }' % color)
+        self.lineEdits[index].setStyleSheet('QLineEdit { background-color: %s }' % color)
 ## button executions
     # cancel button, go back to mainMenu
     def goMainMenu(self):
