@@ -157,7 +157,7 @@ class Ui_updateMenu1(object):
             if state == QtGui.QValidator.Acceptable:
                 val = int(checkbox.text())
                 if val>0:
-                    checkedNodes.append([node,nodeName,val])
+                    checkedNodes.append([nodeName,val])
             else:
                 # prompt the user ofr the problem 
                 QtWidgets.QMessageBox.information(self.home.window, 'Error', 'You have enter invalid data in row Media {}!'.format(nodeName), QtWidgets.QMessageBox.Ok)
@@ -166,7 +166,7 @@ class Ui_updateMenu1(object):
                 return
         # we generate a message to show the user
         if checkedNodes:
-            message = "You have chose the following media(s):\n {}. \nPlease press Ok to proceed, or Cancel to checkmark more media".format(", ".join([item[1] for item in checkedNodes]))
+            message = "You have chose the following media(s):\n {}. \nPlease press Ok to proceed, or Cancel to checkmark more media".format(", ".join([item[0] for item in checkedNodes]))
         else:
             message = "You have not chosen anything, pressing Ok to go back to Main Menu, Cancel to checkmark more media"
         # we create a qmessage box
@@ -176,7 +176,7 @@ class Ui_updateMenu1(object):
                 # we share our checkedNode with our root home
                 self.home.updateNodes = checkedNodes                                
                 # we will display the one we will modify
-                nodeNames = set([item[1] for item in checkedNodes])
+                nodeNames = set([item[0] for item in checkedNodes])
                 text = "You are modifying the red nodes!"
                 self.home.visualize(nodeNames,text)
                 # we show the updateMenu2 window
