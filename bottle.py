@@ -77,6 +77,8 @@ class Bottle:
             if updateNodes:
                 if name in updateNodes:
                     newNode =pydot.Node(name,style="filled", fillcolor="pink") 
+                else:
+                    newNode =pydot.Node(name)
             else:
                 newNode =pydot.Node(name)
             newNode.obj_dict['name'] = info
