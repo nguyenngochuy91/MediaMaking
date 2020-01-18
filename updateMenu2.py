@@ -72,8 +72,6 @@ class Ui_updateMenu2(object):
         #### generate label and field to fill out
         # this map a node name, to a check box
         self.dic = {}    
-        # a map for node to name from root
-        self.nodeToName,self.nameToNode = self.home.root.generateNames()
         # generate the labels base on root node, and store it into our allcheckbox
         self.generateLabels(layout2)
         
@@ -92,6 +90,13 @@ class Ui_updateMenu2(object):
         self.pushButton_2.setGeometry(QtCore.QRect(500, 250, 61, 41))
         self.pushButton_2.setObjectName("pushButton_2")
         self.pushButton_2.clicked.connect(self.goMainMenu)
+
+
+        # Back button
+        self.pushButton_3 = QtWidgets.QPushButton()
+        self.pushButton_3.setGeometry(QtCore.QRect(680, 250, 61, 41))
+        self.pushButton_3.setObjectName("pushButton_3")
+        self.pushButton_3.clicked.connect(lambda: self.home.showWindow({"name":"updateMenu1"}))
         
         layout3.addWidget(self.pushButton)
         layout3.addWidget(self.pushButton_2)
@@ -117,16 +122,19 @@ class Ui_updateMenu2(object):
         
     # generate all the check label
     def generateLabels(self,layout):
+        self.dic = {}
         checkedNodes  = self.home.updateNodes # (pydot,name,child)
-        for nodeName, numChild in checkedNodes:
+        for nodeName, numChild,node in checkedNodes:
             self.dic[nodeName] = []
+            num = len(node.children)
             for i in range(numChild):
-                newName = nodeName+alphabet[i] 
+                newName = nodeName+alphabet[i+num] 
                 ph = QtWidgets.QLineEdit()
                 date = QtWidgets.QLineEdit()
                 notes = QtWidgets.QPlainTextEdit()
                 self.dic[nodeName].append([newName,ph,date,notes])
-        for nodeName, numChild in checkedNodes:
+        for nodeName, numChild,node in checkedNodes:
+            print (nodeName, numChild)
             myList = self.dic[nodeName]
             mediaLayout = QVBoxLayout()
             label = QLabel("<html><head/><body><p align=\"center\"><span style=\" font-size:14pt; color:#ff55ff;\">{}</span></p><p align=\"center\"><br/></p></body></html>".format(nodeName))
@@ -186,47 +194,71 @@ class Ui_updateMenu2(object):
             color = '#f6989d' # red
         sender.setStyleSheet('QLineEdit { background-color: %s }' % color)
 ## button executions
-    # cancel button, go back to mainMenu
+    # cancel button, go back to updateMenu2
     def goMainMenu(self):
-        self.home.showWindow({"name":"mainMenu"})
+        self.home.showWindow({"name":"updateMenu1"})
     # ok button, store it into a bottle object, and go to menu
     def ok(self):
-        # get all the check box that was check
-        checkedNodes = []
-        for node,nodeName in self.nodeToName:
-            checkbox = self.allCheckBox[nodeName]
-            state = checkbox.validator.validate(checkbox.text(),0)[0]
-            if state == QtGui.QValidator.Acceptable:
-                val = int(checkbox.text())
-                if val>0:
-                    checkedNodes.append([node,nodeName,val])
-            else:
-                # prompt the user ofr the problem 
-                QtWidgets.QMessageBox.information(self.home.window, 'Error', 'You have enter invalid data in row Media {}!'.format(nodeName), QtWidgets.QMessageBox.Ok)
-                checkbox.setFocusPolicy(QtCore.Qt.StrongFocus)
-                checkbox.setFocus()  
-                return
-        # we generate a message to show the user
+        # get all the info from each media name
+        parentNameToNodes = {} # key: node name, value: list of bottle
+        checkedNodes  = self.home.updateNodes # (name,child,bottleNode)
+        
+        # we collect info for each media, and each child
+        # we will display the one we added
+        addNodes = set()
+        print ("self.dic:",self.dic)
+        for nodeName,numberChildren,node in checkedNodes:
+            myList = self.dic[nodeName]
+            print ("myList:",myList)
+            parentNameToNodes[nodeName] = []
+            for i in range(len(myList)):
+                newName,ph,date,notes = myList[i]
+                addNodes.add(newName)
+                # check valid for each
+                states = {ph:"pH",date:"date"}
+                output = [newName]
+                for field in states:
+                    state = field.validator.validate(field.text(),0)[0]
+                    if state == QtGui.QValidator.Acceptable:
+                        val = field.text()
+                        output.append(val)
+                    else:
+                        # prompt the user ofr the problem 
+                        QtWidgets.QMessageBox.information(self.home.window, 'Error', 'You have enter invalid data in row Media {}!'.format(newName), QtWidgets.QMessageBox.Ok)
+                        field.setFocusPolicy(QtCore.Qt.StrongFocus)
+                        field.setFocus()  
+                        return
+                output.append(notes.toPlainText())
+            parentNameToNodes[nodeName].append(output)
+        # here means that all input are correct, we double check with user
         if checkedNodes:
-            message = "You have chose the following media(s):\n {}. \nPlease press Ok to proceed, or Cancel to checkmark more media".format(", ".join([item[1] for item in checkedNodes]))
-        else:
-            message = "You have not chosen anything, pressing Ok to go back to Main Menu, Cancel to checkmark more media"
+            message = "You have chose the following media(s):\n {}. \nPlease press Ok to proceed, or Cancel to modify more media".format(", ".join([item[0] for item in checkedNodes]))
+
         # we create a qmessage box
         buttonReply = QMessageBox.question(self.home.window, 'Warning!!!', message, QMessageBox.Ok | QMessageBox.Cancel, QMessageBox.Ok)
         if buttonReply == QMessageBox.Ok:
-            if checkedNodes:
-                # we share our checkedNode with our root home
-                self.home.updateNodes = checkedNodes                                
-                # we will display the one we will modify
-                nodeNames = set([item[1] for item in checkedNodes])
-                text = "You are modifying the red nodes!"
-                self.home.visualize(nodeNames,text)
-                # we show the updateMenu2 window
-                self.home.showWindow({"name":"updateMenu2"})
-        
-            else:
+            # lots to do, first of deep copy our self.home.root
+            deepCopy = self.home.root.deepCopy()
+            # we will display the one we will modify
+            nodeNames = set([item[0] for item in self.home.updateNodes])
+            text = "You are modifying the pink nodes, and the added children are the green nodes"
+            # from the deep copy, we update all the children
+            print (parentNameToNodes)
+            self.home.root.updateAllNodes(parentNameToNodes)
+            # now we check with user if this is what they want    
+            self.home.visualize(nodeNames,text,addNodes)
+            # check with user
+            reply =  QMessageBox.question(self.home.window, 'Warning', "Please check if the graph is corrected, yoo can press Ok to proceed to main menu, or Cancel to modify more media",  QMessageBox.Ok | QMessageBox.Cancel, QMessageBox.Ok)
+            if reply == QMessageBox.Ok:
+                # we show the mainMenu window
                 self.home.showWindow({"name":"mainMenu"})
+            else:
+                # we reset our selfhome root
+                # we save self.home.root to our deepCoy
+                self.home.root = deepCopy
+                pass
         else:
+            self.home.root = deepCopy
             pass 
         
 if __name__ == "__main__":

@@ -8,7 +8,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMessageBox
+# from PyQt5.QtWidgets import QMessageBox
 from bottle import Bottle
 class Validator(QtGui.QDoubleValidator):
     def validate(self, value, pos):

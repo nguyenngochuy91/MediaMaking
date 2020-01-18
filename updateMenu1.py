@@ -14,12 +14,15 @@ from PyQt5 import QtWidgets,QtCore,QtGui
 #from bottle import Bottle
 from functools import partial
 
+
+threshold = 10
+
 class Validator(QtGui.QIntValidator):
     def validate(self, value, pos):
         text = value.strip().title()
         try:
             val = int(text)
-            if val<0 or val>10:
+            if val<0 or val>threshold:
                 return QtGui.QValidator.Invalid, text, pos
             else:
                 return QtGui.QValidator.Acceptable, text, pos
@@ -132,6 +135,7 @@ class Ui_updateMenu1(object):
     # check the label
         ## validation method for user input with color
     def checkState(self,index):
+        # node,name = self.nodeToName[index]
 #        print ("my index:",index)
         validator = self.lineEdits[index].validator
         # print (sender.text())
@@ -157,7 +161,16 @@ class Ui_updateMenu1(object):
             if state == QtGui.QValidator.Acceptable:
                 val = int(checkbox.text())
                 if val>0:
-                    checkedNodes.append([nodeName,val])
+                    # check w threshold as well
+                    print ()
+                    currentNumChildren = len(node.getChildren())
+                    if currentNumChildren + val <=10:
+                        checkedNodes.append([nodeName,val,node])
+                    else:
+                        QtWidgets.QMessageBox.information(self.home.window, 'Error', 'You have {} children for Media {} already! Please provide a number less than {} for the Media{}'.format(currentNumChildren,nodeName,11-currentNumChildren,nodeName), QtWidgets.QMessageBox.Ok)
+                        checkbox.setFocusPolicy(QtCore.Qt.StrongFocus)
+                        checkbox.setFocus()  
+                        return
             else:
                 # prompt the user ofr the problem 
                 QtWidgets.QMessageBox.information(self.home.window, 'Error', 'You have enter invalid data in row Media {}!'.format(nodeName), QtWidgets.QMessageBox.Ok)
@@ -177,7 +190,7 @@ class Ui_updateMenu1(object):
                 self.home.updateNodes = checkedNodes                                
                 # we will display the one we will modify
                 nodeNames = set([item[0] for item in checkedNodes])
-                text = "You are modifying the red nodes!"
+                text = "You are modifying the pink nodes!"
                 self.home.visualize(nodeNames,text)
                 # we show the updateMenu2 window
                 self.home.showWindow({"name":"updateMenu2"})
@@ -187,6 +200,8 @@ class Ui_updateMenu1(object):
         else:
             pass 
         
+        
+        # def getChildren(self,node):
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

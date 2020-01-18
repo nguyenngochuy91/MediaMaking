@@ -183,9 +183,9 @@ class Ui_MainWindow(object):
         self.form.show() 
         # we switch with the form
         self.current = self.form
-    def visualize(self,updateNodes = set(),text = "Your current beautiful graph:"):
+    def visualize(self,updateNodes = set(),text = "Your current beautiful graph:",childNodes = set()):
         if self.root:
-            graph,nodeToName = self.root.generateGraph(updateNodes)
+            graph,nodeToName = self.root.generateGraph(updateNodes,childNodes)
             graph.write_png("temp")
             pixmap = QtGui.QPixmap('temp')
             # generate a new widget to show

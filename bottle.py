@@ -8,8 +8,7 @@ Created on Fri Jan 10 18:14:15 2020
 """
 import pydot
 import json
-from IPython.display import Image, display
-import os,platform
+
 
 class Bottle:
     def __init__(self,name,ph,date,notes,children,parent = None):
@@ -59,7 +58,7 @@ class Bottle:
             dic[self.name]["Children:"].update(childDic)
         return dic
     # generate a digraph to visualization
-    def generateGraph(self,updateNodes =set()):
+    def generateGraph(self,updateNodes =set(),childNodes = set()):
         # generate a digraph for Dot
         graph = pydot.Dot(graph_type='digraph')
         queue = [self]
@@ -80,9 +79,16 @@ class Bottle:
                 else:
                     newNode =pydot.Node(name)
             else:
-                newNode =pydot.Node(name)
+                if childNodes:
+                    if name in childNodes:
+                        print (84,name)
+                        newNode =pydot.Node(name,style="filled", fillcolor="green")
+                    else:
+                        newNode =pydot.Node(name)
+                else:
+                    newNode =pydot.Node(name)
             newNode.obj_dict['name'] = info
-            nodeToName.append((newNode,name))
+            nodeToName.append((node,name))
             parent = node.getParent()
             if parent:
                 newE      = pydot.Edge(d[parent],d[node],color="blue")
@@ -155,6 +161,31 @@ class Bottle:
             newNode.updateChildren(children)
             return newNode
         return dfs(self)
+    # given self, and a node name, return the dictionary of nodename to node
+    def find(self,nodeNames):
+        dic = {}
+        def dfs(node):
+            if node.name in nodeNames:
+                dic[node.name] = node
+            for child in node.children:
+                dfs(child)
+        dfs(self)
+        return dic
+    # given a dictionary update all the node with children 
+    def updateAllNodes(self,parentNameToNodes):
+        dic = self.find([name for name in parentNameToNodes])
+        print (parentNameToNodes)
+        print (dic)
+        # for each of the name, we get the list of info, create a bottle object, then update our node
+        for name in parentNameToNodes:
+            myList = parentNameToNodes[name]
+            node = dic[name]
+            children = []
+            for newName,ph,date,notes in myList:
+                bottle = Bottle(newName, ph,date,notes, [],None)
+                children.append(bottle)
+            node.updateChildren(children)
+    
 A = Bottle("A",1,"",7,[],None)
 AA = Bottle("AA",1,"",7,[],None)
 AB = Bottle("AB",1,"",7,[],None)
@@ -169,3 +200,4 @@ A.writeJSON("data")
 #dictionary =json.load(open("data","r"))
 #B = Bottle("",0,"",0,[],None)
 #C = B.load(dictionary)
+B = A.deepCopy()
