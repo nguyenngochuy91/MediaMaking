@@ -60,6 +60,8 @@ class Bottle:
     # generate a digraph to visualization
     def generateGraph(self,updateNodes =set(),childNodes = set()):
         # generate a digraph for Dot
+        print ("updateNodes:",updateNodes)
+        print ("ChildNodes:",childNodes)
         graph = pydot.Dot(graph_type='digraph')
         queue = [self]
         d = {}
@@ -79,19 +81,26 @@ class Bottle:
                 else:
                     newNode =pydot.Node(name)
             else:
-                if childNodes:
-                    if name in childNodes:
-                        print (84,name)
-                        newNode =pydot.Node(name,style="filled", fillcolor="green")
-                    else:
-                        newNode =pydot.Node(name)
+                newNode =pydot.Node(name)
+            if childNodes:
+                if name in childNodes:
+                    print (84,name)
+                    newNode =pydot.Node(name,style="filled", fillcolor="green")
                 else:
                     newNode =pydot.Node(name)
+            else:
+                newNode =pydot.Node(name)
             newNode.obj_dict['name'] = info
             nodeToName.append((node,name))
             parent = node.getParent()
             if parent:
-                newE      = pydot.Edge(d[parent],d[node],color="blue")
+                if childNodes:
+                    if name in childNodes:
+                        newE      = pydot.Edge(d[parent],d[node],color="blue")
+                    else:
+                        newE      = pydot.Edge(d[parent],d[node],color="black")
+                else:
+                    newE      = pydot.Edge(d[parent],d[node],color="black")
                 graph.add_edge(newE)
             graph.add_node(newNode)        
             # attribute = G[parent][children]
@@ -174,8 +183,8 @@ class Bottle:
     # given a dictionary update all the node with children 
     def updateAllNodes(self,parentNameToNodes):
         dic = self.find([name for name in parentNameToNodes])
-        print (parentNameToNodes)
-        print (dic)
+        # print (parentNameToNodes)
+        # print (dic)
         # for each of the name, we get the list of info, create a bottle object, then update our node
         for name in parentNameToNodes:
             myList = parentNameToNodes[name]

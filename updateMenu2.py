@@ -206,10 +206,10 @@ class Ui_updateMenu2(object):
         # we collect info for each media, and each child
         # we will display the one we added
         addNodes = set()
-        print ("self.dic:",self.dic)
+        # print ("self.dic:",self.dic)
         for nodeName,numberChildren,node in checkedNodes:
             myList = self.dic[nodeName]
-            print ("myList:",myList)
+            # print ("myList:",myList)
             parentNameToNodes[nodeName] = []
             for i in range(len(myList)):
                 newName,ph,date,notes = myList[i]
@@ -229,7 +229,7 @@ class Ui_updateMenu2(object):
                         field.setFocus()  
                         return
                 output.append(notes.toPlainText())
-            parentNameToNodes[nodeName].append(output)
+                parentNameToNodes[nodeName].append(output)
         # here means that all input are correct, we double check with user
         if checkedNodes:
             message = "You have chose the following media(s):\n {}. \nPlease press Ok to proceed, or Cancel to modify more media".format(", ".join([item[0] for item in checkedNodes]))
@@ -243,7 +243,7 @@ class Ui_updateMenu2(object):
             nodeNames = set([item[0] for item in self.home.updateNodes])
             text = "You are modifying the pink nodes, and the added children are the green nodes"
             # from the deep copy, we update all the children
-            print (parentNameToNodes)
+            # print (parentNameToNodes)
             self.home.root.updateAllNodes(parentNameToNodes)
             # now we check with user if this is what they want    
             self.home.visualize(nodeNames,text,addNodes)
