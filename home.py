@@ -183,10 +183,9 @@ class Ui_MainWindow(object):
         self.form.show() 
         # we switch with the form
         self.current = self.form
-    def visualize(self):
+    def visualize(self,updateNodes = set(),text = "Your current beautiful graph:"):
         if self.root:
-            graph,nodeToName = self.root.generateGraph()
-    #        self.home.root.writeJSON("data")
+            graph,nodeToName = self.root.generateGraph(updateNodes)
             graph.write_png("temp")
             pixmap = QtGui.QPixmap('temp')
             # generate a new widget to show
@@ -201,7 +200,7 @@ class Ui_MainWindow(object):
             # print (pixmap.width(),pixmap.height())
             # formlayout for our label
             formLayout =QFormLayout()
-            groupBox = QGroupBox("Your current beautiful graph:")
+            groupBox = QGroupBox(text)
             formLayout.addRow(label)
             groupBox.setLayout(formLayout)
     #         add scrollable

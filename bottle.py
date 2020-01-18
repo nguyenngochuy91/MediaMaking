@@ -59,7 +59,7 @@ class Bottle:
             dic[self.name]["Children:"].update(childDic)
         return dic
     # generate a digraph to visualization
-    def generateGraph(self,updateNodes = set()):
+    def generateGraph(self,updateNodes =set()):
         # generate a digraph for Dot
         graph = pydot.Dot(graph_type='digraph')
         queue = [self]
@@ -74,19 +74,18 @@ class Bottle:
             info = "name: {}\ndate: {}\npH: {}\nnotes: {}".format(name,date,ph,notes)
             d[node] = info
             # generate newNode
-            if name in updateNodes:
-                newNode = pydot.Node(info, style="filled", fillcolor="red")
+            if updateNodes:
+                if name in updateNodes:
+                    newNode =pydot.Node(name,style="filled", fillcolor="pink") 
             else:
-                newNode = pydot.Node(info)
+                newNode =pydot.Node(name)
             newNode.obj_dict['name'] = info
             nodeToName.append((newNode,name))
             parent = node.getParent()
             if parent:
                 newE      = pydot.Edge(d[parent],d[node],color="blue")
                 graph.add_edge(newE)
-            else:
-                graph.add_node(newNode)
-                
+            graph.add_node(newNode)        
             # attribute = G[parent][children]
             # v         = float(attribute['volume'])
             # add       = float(attribute['add'])

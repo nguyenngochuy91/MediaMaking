@@ -153,9 +153,17 @@ class Ui_updateMenu1(object):
         checkedNodes = []
         for node,nodeName in self.nodeToName:
             checkbox = self.allCheckBox[nodeName]
-            val = int(checkbox.text())
-            if val>0:
-                checkedNodes.append([node,nodeName,val])
+            state = checkbox.validator.validate(checkbox.text(),0)[0]
+            if state == QtGui.QValidator.Acceptable:
+                val = int(checkbox.text())
+                if val>0:
+                    checkedNodes.append([node,nodeName,val])
+            else:
+                # prompt the user ofr the problem 
+                QtWidgets.QMessageBox.information(self.home.window, 'Error', 'You have enter invalid data in row Media {}!'.format(nodeName), QtWidgets.QMessageBox.Ok)
+                checkbox.setFocusPolicy(QtCore.Qt.StrongFocus)
+                checkbox.setFocus()  
+                return
         # we generate a message to show the user
         if checkedNodes:
             message = "You have chose the following media(s):\n {}. \nPlease press Ok to proceed, or Cancel to checkmark more media".format(", ".join([item[1] for item in checkedNodes]))
@@ -166,11 +174,11 @@ class Ui_updateMenu1(object):
         if buttonReply == QMessageBox.Ok:
             if checkedNodes:
                 # we share our checkedNode with our root home
-                self.home.updateNodes = checkedNodes
-                
-                # we need to make a deep copy of our root node, and color the node with names in checkedNodes as red
-                self.deepCopyRoot = self.root.deepCopy()                
-                
+                self.home.updateNodes = checkedNodes                                
+                # we will display the one we will modify
+                nodeNames = set([item[1] for item in checkedNodes])
+                text = "You are modifying the red nodes!"
+                self.home.visualize(nodeNames,text)
                 # we show the updateMenu2 window
                 self.home.showWindow({"name":"updateMenu2"})
         
@@ -178,40 +186,7 @@ class Ui_updateMenu1(object):
                 self.home.showWindow({"name":"mainMenu"})
         else:
             pass 
-    def visualize(self):
-        if self.home.root:
-            graph,nodeToName = self.home.root.generateGraph()
-    #        self.home.root.writeJSON("data")
-            graph.write_png("temp")
-            pixmap = QtGui.QPixmap('temp')
-            # generate a new widget to show
-            self.newWidget = QtWidgets.QWidget()
-            self.newWidget.setWindowTitle("Visualization")
-            
-            # label object
-            label = QtWidgets.QLabel(self.newWidget)
-            label.setPixmap(pixmap)
-            self.newWidget.resize(pixmap.width(),pixmap.height())
-    #        self.newWidget.resize(218,139)
-            # print (pixmap.width(),pixmap.height())
-            # formlayout for our label
-            formLayout =QFormLayout()
-            groupBox = QGroupBox("Your current beautiful graph:")
-            formLayout.addRow(label)
-            groupBox.setLayout(formLayout)
-    #         add scrollable
-            scroller = QtWidgets.QScrollArea()
-            scroller.setWidget(groupBox)
-            scroller.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
-            scroller.setWidgetResizable(True)
-            
-            # main layout
-            layout = QVBoxLayout(self.newWidget)
-            layout.addWidget(scroller)
-            
-            self.newWidget.show()
-        else:
-            QtWidgets.QMessageBox.information(self.home.window, 'Error', 'You have no data to visualize yet, please either create a new experiment, or open a file', QtWidgets.QMessageBox.Ok)
+        
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

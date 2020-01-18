@@ -26,7 +26,7 @@ class Ui_updateMenu2(object):
         self.centralwidget.setObjectName("centralwidget")
 
         # print out self.home.updateNodes
-        print ("Media to update: {}".format(self.home.updateNodes))
+#        print ("Media to update: {}".format(self.home.updateNodes))
         self.centralwidget = QtWidgets.QWidget(Form)
         # self.centralWidget.setObjectName("centralWidget")
         allLayout = QtWidgets.QVBoxLayout(self.centralwidget)
