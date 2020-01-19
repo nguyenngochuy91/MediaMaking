@@ -11,7 +11,9 @@ from PyQt5.QtWidgets import QFileDialog,QGroupBox,QFormLayout,QVBoxLayout
 #from PyQt5.QtCore import Qt
 #import pydot # to visualize
 import json
-from bottle import Bottle
+import bottle
+from datetime import datetime
+
 
 class Ui_MainMenu(object):
     def setupUi(self, MainWindow,home):
@@ -52,6 +54,7 @@ class Ui_MainMenu(object):
         self.pushButton_5 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_5.setGeometry(QtCore.QRect(330, 100, 231, 27))
         self.pushButton_5.setObjectName("pushButton_5")
+        self.pushButton_5.clicked.connect(self.analyze)        
         
         # Modify button
         self.pushButton_6 = QtWidgets.QPushButton(self.centralwidget)
@@ -149,7 +152,7 @@ class Ui_MainMenu(object):
             # we store the file and bring us to another frame
             with open(name, "r") as read_file:
                 data = json.load(read_file)
-                dummyBottle = Bottle("",0,"",0,[],None)
+                dummyBottle = bottle.Bottle("",0,"",0,[],None)
                 self.home.root = dummyBottle.load(data)
                 # we go to the main menu
 #                self.showWindow("mainMenu")
@@ -185,6 +188,16 @@ class Ui_MainMenu(object):
         # we go to the update Page
         if self.home.root:
             self.home.showWindow({"name":"modifyMenu1"})
+    
+    #analyze button
+    def analyze(self):
+        if self.home.root:
+        # provide the visualization of current graph
+            text = "Your current beautiful graph, the media that is more than 30 days old are in pink color, more than 60 days are in red colors"
+            warningDic,dangerousDic = self.home.root.getInterestingNodes(bottle.warning,bottle.dangerous)
+            self.home.visualize(warningDic,text,dangerousDic)
+        else:
+            QtWidgets.QMessageBox.information(self.home.window, 'Error', 'You have no data to visualize yet, please either create a new experiment, or open a file', QtWidgets.QMessageBox.Ok)
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

@@ -141,7 +141,7 @@ class Ui_modifyMenu1(object):
                 # we share our checkedNode with our root home
                 self.home.modifyNodes = checkedNodes                                
                 # we will display the one we will modify
-                nodeNames = set([node.name for node in checkedNodes])
+                nodeNames = {item.name:"pink" for item in checkedNodes}
                 text = "You are modifying the pink nodes!"
                 self.home.visualize(nodeNames,text)
                 # we show the updateMenu2 window

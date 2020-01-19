@@ -205,7 +205,7 @@ class Ui_updateMenu2(object):
         
         # we collect info for each media, and each child
         # we will display the one we added
-        addNodes = set()
+        addNodes = {}
         # print ("self.dic:",self.dic)
         for nodeName,numberChildren,node in checkedNodes:
             myList = self.dic[nodeName]
@@ -213,7 +213,7 @@ class Ui_updateMenu2(object):
             parentNameToNodes[nodeName] = []
             for i in range(len(myList)):
                 newName,ph,date,notes = myList[i]
-                addNodes.add(newName)
+                addNodes[newName] = "green"
                 # check valid for each
                 states = {ph:"pH",date:"date"}
                 output = [newName]
@@ -240,7 +240,7 @@ class Ui_updateMenu2(object):
             # lots to do, first of deep copy our self.home.root
             deepCopy = self.home.root.deepCopy()
             # we will display the one we will modify
-            nodeNames = set([item[0] for item in self.home.updateNodes])
+            nodeNames = {item[0]:"pink" for item in checkedNodes}
             text = "You are updating the pink nodes, and the added children are the green nodes"
             # from the deep copy, we update all the children
             # print (parentNameToNodes)

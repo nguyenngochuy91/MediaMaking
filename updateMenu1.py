@@ -11,18 +11,15 @@ from PyQt5.QtWidgets import ( QLineEdit, QLabel,
                              QMessageBox)
 from PyQt5.QtCore import Qt
 from PyQt5 import QtWidgets,QtCore,QtGui
-#from bottle import Bottle
 from functools import partial
-
-
-threshold = 10
+import bottle
 
 class Validator(QtGui.QIntValidator):
     def validate(self, value, pos):
         text = value.strip().title()
         try:
             val = int(text)
-            if val<0 or val>threshold:
+            if val<0 or val>bottle.threshold:
                 return QtGui.QValidator.Invalid, text, pos
             else:
                 return QtGui.QValidator.Acceptable, text, pos
@@ -189,7 +186,7 @@ class Ui_updateMenu1(object):
                 # we share our checkedNode with our root home
                 self.home.updateNodes = checkedNodes                                
                 # we will display the one we will modify
-                nodeNames = set([item[0] for item in checkedNodes])
+                nodeNames = {item[0]:"pink" for item in checkedNodes}
                 text = "You are updating the pink nodes!"
                 self.home.visualize(nodeNames,text)
                 # we show the updateMenu2 window

@@ -231,7 +231,7 @@ class Ui_modifyMenu2(object):
             # lots to do, first of deep copy our self.home.root
             deepCopy = self.home.root.deepCopy()
             # we will display the one we will modify
-            nodeNames = set([item.name for item in self.home.modifyNodes])
+            nodeNames = {item.name:"pink" for item in checkedNodes}
             text = "You are modifying the pink nodes"
             # from the deep copy, we update all the children
             # print (parentNameToNodes)
