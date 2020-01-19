@@ -10,6 +10,7 @@ in a json format, and as a graph in png format. This software also provides a fr
 * [PyQt5](https://pypi.org/project/PyQt5/)
 * [pydot](https://github.com/erocarrera/pydot) 
 * [graphviz](https://www.graphviz.org/)
+* [dateparser](https://pypi.org/project/dateparser/)
 ## Installation
 Users can either use github interface Download button or type the following command in command line:
 ```bash
@@ -17,7 +18,7 @@ git clone https://github.com/nguyenngochuy91/MediaMaking.git
 ```
 The users can either download the source codes of the requirements or use package management systems such as [brew](https://brew.sh/),
  or [conda](https://conda.io/miniconda.html). Users can also try [pip](https://pypi.org/project/pip/), but it has some problems for downloading 
-both pydot and graphviz. 
+both pydot and graphviz. Conda might fail with dateparser because of PyQt4 package, recommend using pip3 to install this package.
 
 
 ## Usage
