@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+"""
+Created on Sat Jan 18 23:28:18 2020
+
+@author: huyn
+"""
+
+# -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file 'updateMenu1.ui'
 #
@@ -32,7 +39,7 @@ class Validator(QtGui.QDoubleValidator):
                 return QtGui.QValidator.Intermediate, text, pos 
             return QtGui.QValidator.Acceptable, text, pos
         return super(Validator, self).validate(value, pos)
-class Ui_updateMenu2(object):
+class Ui_modifyMenu2(object):
     def setupUi(self, Form,home):
         self.home = home
         self.form = Form
@@ -123,59 +130,52 @@ class Ui_updateMenu2(object):
     # generate all the check label
     def generateLabels(self,layout):
         self.dic = {}
-        checkedNodes  = self.home.updateNodes # (pydot,name,child)
-        for nodeName, numChild,node in checkedNodes:
-            self.dic[nodeName] = []
-            num = len(node.children)
-            for i in range(numChild):
-                newName = nodeName+alphabet[i+num] 
-                ph = QtWidgets.QLineEdit()
-                date = QtWidgets.QLineEdit()
-                notes = QtWidgets.QPlainTextEdit()
-                self.dic[nodeName].append([newName,ph,date,notes])
-        for nodeName, numChild,node in checkedNodes:
-            print (nodeName, numChild)
-            myList = self.dic[nodeName]
+        checkedNodes  = self.home.modifyNodes # (pydot,name,child)
+        for node in checkedNodes:
+            nodeName = node.name
+            ph = QtWidgets.QLineEdit()
+            date = QtWidgets.QLineEdit()
+            notes = QtWidgets.QPlainTextEdit()
+            self.dic[nodeName]= [ph,date,notes]
+        for node in checkedNodes:
+            nodeName = node.name
+            ph,date,notes = self.dic[nodeName]
             mediaLayout = QVBoxLayout()
             label = QLabel("<html><head/><body><p align=\"center\"><span style=\" font-size:14pt; color:#ff55ff;\">{}</span></p><p align=\"center\"><br/></p></body></html>".format(nodeName))
             label.setTextFormat(QtCore.Qt.RichText)            
             mediaLayout.addWidget(label)
-            for i in range(len(myList)):
-                smallLayout = QVBoxLayout()
-                newName,ph,date,notes = myList[i]
-                label = QLabel("Media {}".format(newName))
-                smallLayout.addWidget(label)
-                
-                # ph
-                phLayout = QHBoxLayout()
-                phLayout.addWidget(QLabel("pH:   "))
-                ph.validator = Validator(ph)
-                ph.setText("")
-                ph.textChanged.connect(partial(self.checkState,ph))
-                ph.textChanged.emit(ph.text())     
-                phLayout.addWidget(ph)
-                smallLayout.addLayout(phLayout)
-                
-                # date
-                dateLayout = QHBoxLayout()
-                dateLayout.addWidget(QLabel("Date: "))
-                regex=QtCore.QRegExp("^\d{4}[\-\/\s]?((((0[13578])|(1[02]))[\-\/\s]?(([0-2][0-9])|(3[01])))|(((0[469])|(11))[\-\/\s]?(([0-2][0-9])|(30)))|(02[\-\/\s]?[0-2][0-9]))$")
-                date.validator = QtGui.QRegExpValidator(regex)
-                date.setText("")
-                date.textChanged.connect(partial(self.checkState,date))
-                date.textChanged.emit(date.text())  
-                dateLayout.addWidget(date)
-                smallLayout.addLayout(dateLayout)
-                
-                # notes
-                notesLayout = QHBoxLayout()
-                notesLayout.addWidget(QLabel("Notes: "))     
-                notesLayout.addWidget(notes)
-                smallLayout.addLayout(notesLayout)
-                
+            smallLayout = QVBoxLayout()
+            
+            # ph
+            phLayout = QHBoxLayout()
+            phLayout.addWidget(QLabel("pH:   "))
+            ph.validator = Validator(ph)
+            ph.setText("")
+            ph.textChanged.connect(partial(self.checkState,ph))
+            ph.textChanged.emit(ph.text())     
+            phLayout.addWidget(ph)
+            smallLayout.addLayout(phLayout)
+            
+            # date
+            dateLayout = QHBoxLayout()
+            dateLayout.addWidget(QLabel("Date: "))
+            regex=QtCore.QRegExp("^\d{4}[\-\/\s]?((((0[13578])|(1[02]))[\-\/\s]?(([0-2][0-9])|(3[01])))|(((0[469])|(11))[\-\/\s]?(([0-2][0-9])|(30)))|(02[\-\/\s]?[0-2][0-9]))$")
+            date.validator = QtGui.QRegExpValidator(regex)
+            date.setText("")
+            date.textChanged.connect(partial(self.checkState,date))
+            date.textChanged.emit(date.text())  
+            dateLayout.addWidget(date)
+            smallLayout.addLayout(dateLayout)
+            
+            # notes
+            notesLayout = QHBoxLayout()
+            notesLayout.addWidget(QLabel("Notes: "))     
+            notesLayout.addWidget(notes)
+            smallLayout.addLayout(notesLayout)
+            
 
-                mediaLayout.addLayout(smallLayout)           
-                mediaLayout.addSpacing(20)  
+            mediaLayout.addLayout(smallLayout)           
+            mediaLayout.addSpacing(20)  
             layout.addLayout(mediaLayout)
             layout.addSpacing(40)
         return
@@ -194,45 +194,36 @@ class Ui_updateMenu2(object):
             color = '#f6989d' # red
         sender.setStyleSheet('QLineEdit { background-color: %s }' % color)
 ## button executions
-    # cancel button, go back to updateMenu2
+    # cancel button, go back to modifyMenu1
     def goMainMenu(self):
-        self.home.showWindow({"name":"updateMenu1"})
+        self.home.showWindow({"name":"modifyMenu1"})
     # ok button, store it into a bottle object, and go to menu
     def ok(self):
         # get all the info from each media name
-        parentNameToNodes = {} # key: node name, value: list of bottle
-        checkedNodes  = self.home.updateNodes # (name,child,bottleNode)
-        
-        # we collect info for each media, and each child
-        # we will display the one we added
-        addNodes = set()
-        # print ("self.dic:",self.dic)
-        for nodeName,numberChildren,node in checkedNodes:
-            myList = self.dic[nodeName]
-            # print ("myList:",myList)
-            parentNameToNodes[nodeName] = []
-            for i in range(len(myList)):
-                newName,ph,date,notes = myList[i]
-                addNodes.add(newName)
-                # check valid for each
-                states = {ph:"pH",date:"date"}
-                output = [newName]
-                for field in states:
-                    state = field.validator.validate(field.text(),0)[0]
-                    if state == QtGui.QValidator.Acceptable:
-                        val = field.text()
-                        output.append(val)
-                    else:
-                        # prompt the user ofr the problem 
-                        QtWidgets.QMessageBox.information(self.home.window, 'Error', 'You have enter invalid data in row Media {}!'.format(newName), QtWidgets.QMessageBox.Ok)
-                        field.setFocusPolicy(QtCore.Qt.StrongFocus)
-                        field.setFocus()  
-                        return
-                output.append(notes.toPlainText())
-                parentNameToNodes[nodeName].append(output)
+        nodeToNewInfo = {} # key: node name, value: list of bottle
+        checkedNodes  = self.home.modifyNodes # list of node
+
+        for node in checkedNodes:
+            nodeName = node.name
+            ph,date,notes = self.dic[nodeName]
+            states = {ph:"pH",date:"date"}
+            output = []
+            for field in states:
+                state = field.validator.validate(field.text(),0)[0]
+                if state == QtGui.QValidator.Acceptable:
+                    val = field.text()
+                    output.append(val)
+                else:
+                    # prompt the user ofr the problem 
+                    QtWidgets.QMessageBox.information(self.home.window, 'Error', 'You have enter invalid data in row Media {}!'.format(nodeName), QtWidgets.QMessageBox.Ok)
+                    field.setFocusPolicy(QtCore.Qt.StrongFocus)
+                    field.setFocus()  
+                    return
+            output.append(notes.toPlainText())
+            nodeToNewInfo[node] = output
         # here means that all input are correct, we double check with user
         if checkedNodes:
-            message = "You have chose the following media(s):\n {}. \nPlease press Ok to proceed, or Cancel to modify more media".format(", ".join([item[0] for item in checkedNodes]))
+            message = "You have chose the following media(s):\n {}. \nPlease press Ok to proceed, or Cancel to modify more media".format(", ".join([node.name for item in checkedNodes]))
 
         # we create a qmessage box
         buttonReply = QMessageBox.question(self.home.window, 'Warning!!!', message, QMessageBox.Ok | QMessageBox.Cancel, QMessageBox.Ok)
@@ -240,15 +231,19 @@ class Ui_updateMenu2(object):
             # lots to do, first of deep copy our self.home.root
             deepCopy = self.home.root.deepCopy()
             # we will display the one we will modify
-            nodeNames = set([item[0] for item in self.home.updateNodes])
-            text = "You are updating the pink nodes, and the added children are the green nodes"
+            nodeNames = set([item.name for item in self.home.modifyNodes])
+            text = "You are modifying the pink nodes"
             # from the deep copy, we update all the children
             # print (parentNameToNodes)
-            self.home.root.updateAllNodes(parentNameToNodes)
+            for node in nodeToNewInfo:
+                ph,date,notes = nodeToNewInfo[node]
+                node.ph = ph
+                node.date = date
+                node.notes = notes
             # now we check with user if this is what they want    
-            self.home.visualize(nodeNames,text,addNodes)
+            self.home.visualize(nodeNames,text)
             # check with user
-            reply =  QMessageBox.question(self.home.window, 'Warning', "Please check if the graph is corrected, yoo can press Ok to proceed to main menu, or Cancel to modify more media",  QMessageBox.Ok | QMessageBox.Cancel, QMessageBox.Ok)
+            reply =  QMessageBox.question(self.home.window, 'Warning', "Please check if the graph is corrected, you can press Ok to proceed to main menu, or Cancel to modify more media",  QMessageBox.Ok | QMessageBox.Cancel, QMessageBox.Ok)
             if reply == QMessageBox.Ok:
                 # we show the mainMenu window
                 self.home.showWindow({"name":"mainMenu"})
@@ -265,7 +260,7 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     Form = QtWidgets.QMainWindow()
-    ui = Ui_updateMenu2()
+    ui = Ui_modifyMenu2()
     ui.setupUi(Form,None)
     Form.show()
     sys.exit(app.exec_())

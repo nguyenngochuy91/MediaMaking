@@ -60,8 +60,12 @@ class Bottle:
     # generate a digraph to visualization
     def generateGraph(self,updateNodes =set(),childNodes = set()):
         # generate a digraph for Dot
-        print ("updateNodes:",updateNodes)
-        print ("ChildNodes:",childNodes)
+#        print ("updateNodes:",updateNodes)
+#        print ("ChildNodes:",childNodes)
+        if not updateNodes:
+            updateNodes = set()
+        if not childNodes:
+            childNodes = set()
         graph = pydot.Dot(graph_type='digraph')
         queue = [self]
         d = {}
@@ -75,19 +79,11 @@ class Bottle:
             info = "name: {}\ndate: {}\npH: {}\nnotes: {}".format(name,date,ph,notes)
             d[node] = info
             # generate newNode
-            if updateNodes:
-                if name in updateNodes:
-                    newNode =pydot.Node(name,style="filled", fillcolor="pink") 
-                else:
-                    newNode =pydot.Node(name)
-            else:
-                newNode =pydot.Node(name)
-            if childNodes:
-                if name in childNodes:
-                    print (84,name)
-                    newNode =pydot.Node(name,style="filled", fillcolor="green")
-                else:
-                    newNode =pydot.Node(name)
+
+            if name in updateNodes:
+                newNode =pydot.Node(name,style="filled", fillcolor="pink") 
+            elif name in childNodes:
+                newNode =pydot.Node(name,style="filled", fillcolor="green")
             else:
                 newNode =pydot.Node(name)
             newNode.obj_dict['name'] = info

@@ -16,7 +16,8 @@ from newExperiment import Ui_NewExperiment
 from mainMenu import Ui_MainMenu
 from updateMenu1 import Ui_updateMenu1
 from updateMenu2 import Ui_updateMenu2
-
+from modifyMenu1 import Ui_modifyMenu1
+from modifyMenu2 import Ui_modifyMenu2
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -25,7 +26,8 @@ class Ui_MainWindow(object):
         # update nodes will have format [[<pydot.Node object at 0x7f0d0403bf28>, 'A', 1],..., [<pydot.Node object at 0x7f0d040127f0>, 'AD', 2]]
 
         self.updateNodes = None
-        self.pages = {"newExperiment":Ui_NewExperiment(),"mainMenu":Ui_MainMenu(),"updateMenu1":Ui_updateMenu1(),"updateMenu2":Ui_updateMenu2()}
+        self.pages = {"newExperiment":Ui_NewExperiment(),"mainMenu":Ui_MainMenu(),"updateMenu1":Ui_updateMenu1(),"updateMenu2":Ui_updateMenu2(),
+                      "modifyMenu1":Ui_modifyMenu1(),"modifyMenu2":Ui_modifyMenu2()}
         self.window = MainWindow
         self.current = MainWindow
         MainWindow.setObjectName("MainWindow")

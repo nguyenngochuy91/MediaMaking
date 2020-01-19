@@ -57,6 +57,7 @@ class Ui_MainMenu(object):
         self.pushButton_6 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_6.setGeometry(QtCore.QRect(330, 240, 231, 27))
         self.pushButton_6.setObjectName("pushButton_6")
+        self.pushButton_6.clicked.connect(self.modify)
         
         # start new experiment button
         self.pushButton_7 = QtWidgets.QPushButton(self.centralwidget)
@@ -176,6 +177,14 @@ class Ui_MainMenu(object):
         # we go to the update Page
         if self.home.root:
             self.home.showWindow({"name":"updateMenu1"})
+
+    # modify button
+    def modify(self):
+        # provide the visualization of current graph
+        self.home.visualize() 
+        # we go to the update Page
+        if self.home.root:
+            self.home.showWindow({"name":"modifyMenu1"})
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
