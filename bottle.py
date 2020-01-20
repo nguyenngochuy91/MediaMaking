@@ -15,7 +15,10 @@ dangerous = 60
 class Bottle:
     def __init__(self,name,ph,date,notes,children,parent = None):
         self.name = name
-        self.date = dateparser.parse(date)
+        try:
+            self.date = dateparser.parse(date)
+        except:
+            self.date = date
         self.notes = notes
         self.children = children
         self.parent = parent
@@ -29,6 +32,10 @@ class Bottle:
     def getName(self):
         return self.name
     def getDate(self):
+        try:
+            self.date = dateparser.parse(self.date)
+        except:
+            pass
         return "{}/{}/{}".format(self.date.year,self.date.month,self.date.day) 
     def getNotes(self):
         return self.notes
@@ -151,6 +158,7 @@ class Bottle:
     # return a deep copy of itself
     def deepCopy(self):
         def dfs(currentNode):
+#            print (type((currentNode.date)))
             newNode = Bottle(currentNode.name,currentNode.ph,currentNode.date,currentNode.notes,[],currentNode.parent)
             children = []            
             for child in currentNode.children:
